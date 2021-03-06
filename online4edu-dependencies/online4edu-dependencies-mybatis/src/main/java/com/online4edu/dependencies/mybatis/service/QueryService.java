@@ -22,7 +22,7 @@ import java.util.function.Function;
  * @date 2021/03/05 18:57
  * @see com.baomidou.mybatisplus.core.mapper.BaseMapper
  */
-public interface BaseQuery<T, DTO extends T, PK extends Serializable> {
+public interface QueryService<T, DTO extends T, PK extends Serializable> {
 
     /**
      * 根据 ID 查询

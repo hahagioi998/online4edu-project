@@ -16,8 +16,8 @@ import java.io.Serializable;
  * @date 2021/03/05 23:59
  * @see com.baomidou.mybatisplus.core.mapper.BaseMapper
  */
-public interface Service<T, DTO extends T, PK extends Serializable>
-        extends BaseDelete<T, DTO, PK>, BaseUpdate<T, DTO, PK>, BaseQuery<T, DTO, PK> {
+public interface BaseService<T, DTO extends T, PK extends Serializable>
+        extends DeleteService<T, DTO, PK>, SaveService<T, DTO, PK>, QueryService<T, DTO, PK> {
 
     /**
      * Lambda 查看链

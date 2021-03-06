@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.update.Update;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.conditions.AbstractChainWrapper;
-import com.online4edu.dependencies.mybatis.service.Service;
+import com.online4edu.dependencies.mybatis.service.BaseService;
 
 import java.io.Serializable;
 
@@ -19,11 +19,11 @@ public class LambdaUpdateWrapperChain<T, DTO extends T, PK extends Serializable>
         extends AbstractChainWrapper<T, SFunction<T, ?>, LambdaUpdateWrapperChain<T, DTO, PK>, LambdaUpdateWrapper<T>>
         implements Update<LambdaUpdateWrapperChain<T, DTO, PK>, SFunction<T, ?>> {
 
-    private final Service<T, DTO, PK> service;
+    private final BaseService<T, DTO, PK> baseService;
 
-    public LambdaUpdateWrapperChain(Service<T, DTO, PK> service) {
+    public LambdaUpdateWrapperChain(BaseService<T, DTO, PK> baseService) {
         super();
-        this.service = service;
+        this.baseService = baseService;
         super.wrapperChildren = new LambdaUpdateWrapper<>();
     }
 
@@ -46,11 +46,11 @@ public class LambdaUpdateWrapperChain<T, DTO extends T, PK extends Serializable>
 
     @SuppressWarnings("unchecked")
     public boolean execute(T entity) {
-        return service.update(entity, getWrapper());
+        return baseService.update(entity, getWrapper());
     }
 
     @SuppressWarnings("unchecked")
     public boolean execute() {
-        return service.update(getWrapper());
+        return baseService.update(getWrapper());
     }
 }

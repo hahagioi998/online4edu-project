@@ -12,5 +12,7 @@ import java.io.Serializable;
  * @date 2021/03/06 00:08
  * @see com.baomidou.mybatisplus.core.mapper.BaseMapper
  */
-public interface Mapper<T, DTO extends T, PK extends Serializable> {
+public interface BaseMapper<T, DTO extends T, PK extends Serializable>
+        extends InsertMapper<T, DTO, PK>, DeleteMapper<T, DTO, PK>, UpdateMapper<T, DTO, PK>, QueryMapper<T, DTO, PK> {
+
 }

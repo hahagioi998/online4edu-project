@@ -15,7 +15,7 @@ import java.util.Collection;
  * @date 2021/03/05 18:57
  * @see com.baomidou.mybatisplus.core.mapper.BaseMapper
  */
-public interface BaseUpdate<T, DTO extends T, PK extends Serializable> {
+public interface SaveService<T, DTO extends T, PK extends Serializable> {
 
     /**
      * 批量大小
@@ -28,7 +28,7 @@ public interface BaseUpdate<T, DTO extends T, PK extends Serializable> {
      * @param entity 实体对象
      * @return 保存成功返回true, 否则返回false
      */
-    boolean save(T entity);
+    boolean insert(T entity);
 
     /**
      * 插入（批量）

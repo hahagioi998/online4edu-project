@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.conditions.AbstractChainWrapper;
-import com.online4edu.dependencies.mybatis.service.Service;
+import com.online4edu.dependencies.mybatis.service.BaseService;
 
 import java.io.Serializable;
 import java.util.function.Predicate;
@@ -21,11 +21,11 @@ public class LambdaDeleteWrapperChain<T, DTO extends T, PK extends Serializable>
         extends AbstractChainWrapper<T, SFunction<T, ?>, LambdaDeleteWrapperChain<T, DTO, PK>, LambdaQueryWrapper<T>>
         implements Query<LambdaDeleteWrapperChain<T, DTO, PK>, T, SFunction<T, ?>> {
 
-    private final Service<T, DTO, PK> service;
+    private final BaseService<T, DTO, PK> baseService;
 
-    public LambdaDeleteWrapperChain(Service<T, DTO, PK> service) {
+    public LambdaDeleteWrapperChain(BaseService<T, DTO, PK> baseService) {
         super();
-        this.service = service;
+        this.baseService = baseService;
         super.wrapperChildren = new LambdaQueryWrapper<>();
     }
 
@@ -55,7 +55,7 @@ public class LambdaDeleteWrapperChain<T, DTO extends T, PK extends Serializable>
 
     @SuppressWarnings("unchecked")
     public boolean execute() {
-        return service.delete(getWrapper());
+        return baseService.delete(getWrapper());
     }
 
 }

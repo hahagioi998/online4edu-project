@@ -14,7 +14,7 @@ import java.io.Serializable;
  * @author Shilin <br > mingrn97@gmail.com
  * @date 2021/03/05 23:44
  */
-public interface BaseDelete<T, DTO extends T, PK extends Serializable> {
+public interface DeleteService<T, DTO extends T, PK extends Serializable> {
 
     /**
      * 根据 ID 删除

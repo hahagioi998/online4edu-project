@@ -1,0 +1,32 @@
+package com.online4edu.dependencies.mybatis.mapper;
+
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import org.apache.ibatis.annotations.Param;
+
+import java.io.Serializable;
+
+public interface UpdateMapper<T, DTO extends T, PK extends Serializable> {
+
+    /**
+     * 根据 ID 修改
+     *
+     * @param entity 实体对象
+     */
+    int updateById(@Param(Constants.ENTITY) T entity);
+
+    /**
+     * 根据 whereEntity 条件，更新记录
+     *
+     * @param entity        实体对象 (set 条件值,可以为 null)
+     * @param updateWrapper 实体对象封装操作类（可以为 null,里面的 entity 用于生成 where 语句）
+     */
+    int update(@Param(Constants.ENTITY) T entity, @Param(Constants.WRAPPER) Wrapper<T> updateWrapper);
+
+    /**
+     * 根据 ID 更新固定的那几个字段(但是不包含逻辑删除)
+     *
+     * @param entity 实体对象
+     */
+    int alwaysUpdateSomeColumnById(T entity);
+}
