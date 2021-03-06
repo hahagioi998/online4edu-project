@@ -7,34 +7,32 @@ import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.conditions.AbstractChainWrapper;
 import com.online4edu.dependencies.mybatis.service.BaseService;
 
-import java.io.Serializable;
-
 /**
  * Lambda 修改 Wrapper
  *
  * @author Shilin <br > mingrn97@gmail.com
  * @date 2021/03/06 00:02
  */
-public class LambdaUpdateWrapperChain<T, DTO extends T, PK extends Serializable>
-        extends AbstractChainWrapper<T, SFunction<T, ?>, LambdaUpdateWrapperChain<T, DTO, PK>, LambdaUpdateWrapper<T>>
-        implements Update<LambdaUpdateWrapperChain<T, DTO, PK>, SFunction<T, ?>> {
+public class LambdaUpdateWrapperChain<T, V extends T>
+        extends AbstractChainWrapper<T, SFunction<T, ?>, LambdaUpdateWrapperChain<T, V>, LambdaUpdateWrapper<T>>
+        implements Update<LambdaUpdateWrapperChain<T, V>, SFunction<T, ?>> {
 
-    private final BaseService<T, DTO, PK> baseService;
+    private final BaseService<T, V> baseService;
 
-    public LambdaUpdateWrapperChain(BaseService<T, DTO, PK> baseService) {
+    public LambdaUpdateWrapperChain(BaseService<T, V> baseService) {
         super();
         this.baseService = baseService;
         super.wrapperChildren = new LambdaUpdateWrapper<>();
     }
 
     @Override
-    public LambdaUpdateWrapperChain<T, DTO, PK> set(boolean condition, SFunction<T, ?> column, Object val) {
+    public LambdaUpdateWrapperChain<T, V> set(boolean condition, SFunction<T, ?> column, Object val) {
         wrapperChildren.set(condition, column, val);
         return typedThis;
     }
 
     @Override
-    public LambdaUpdateWrapperChain<T, DTO, PK> setSql(boolean condition, String sql) {
+    public LambdaUpdateWrapperChain<T, V> setSql(boolean condition, String sql) {
         wrapperChildren.setSql(condition, sql);
         return typedThis;
     }

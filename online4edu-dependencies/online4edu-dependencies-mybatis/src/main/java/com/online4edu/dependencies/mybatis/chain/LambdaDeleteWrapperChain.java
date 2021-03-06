@@ -8,7 +8,6 @@ import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.conditions.AbstractChainWrapper;
 import com.online4edu.dependencies.mybatis.service.BaseService;
 
-import java.io.Serializable;
 import java.util.function.Predicate;
 
 /**
@@ -17,13 +16,13 @@ import java.util.function.Predicate;
  * @author Shilin <br > mingrn97@gmail.com
  * @date 2021/03/06 00:04
  */
-public class LambdaDeleteWrapperChain<T, DTO extends T, PK extends Serializable>
-        extends AbstractChainWrapper<T, SFunction<T, ?>, LambdaDeleteWrapperChain<T, DTO, PK>, LambdaQueryWrapper<T>>
-        implements Query<LambdaDeleteWrapperChain<T, DTO, PK>, T, SFunction<T, ?>> {
+public class LambdaDeleteWrapperChain<T, V extends T>
+        extends AbstractChainWrapper<T, SFunction<T, ?>, LambdaDeleteWrapperChain<T, V>, LambdaQueryWrapper<T>>
+        implements Query<LambdaDeleteWrapperChain<T, V>, T, SFunction<T, ?>> {
 
-    private final BaseService<T, DTO, PK> baseService;
+    private final BaseService<T, V> baseService;
 
-    public LambdaDeleteWrapperChain(BaseService<T, DTO, PK> baseService) {
+    public LambdaDeleteWrapperChain(BaseService<T, V> baseService) {
         super();
         this.baseService = baseService;
         super.wrapperChildren = new LambdaQueryWrapper<>();
@@ -31,19 +30,19 @@ public class LambdaDeleteWrapperChain<T, DTO extends T, PK extends Serializable>
 
     @SafeVarargs
     @Override
-    public final LambdaDeleteWrapperChain<T, DTO, PK> select(SFunction<T, ?>... columns) {
+    public final LambdaDeleteWrapperChain<T, V> select(SFunction<T, ?>... columns) {
         wrapperChildren.select(columns);
         return typedThis;
     }
 
     @Override
-    public LambdaDeleteWrapperChain<T, DTO, PK> select(Predicate<TableFieldInfo> predicate) {
+    public LambdaDeleteWrapperChain<T, V> select(Predicate<TableFieldInfo> predicate) {
         wrapperChildren.select(predicate);
         return typedThis;
     }
 
     @Override
-    public LambdaDeleteWrapperChain<T, DTO, PK> select(Class<T> entityClass, Predicate<TableFieldInfo> predicate) {
+    public LambdaDeleteWrapperChain<T, V> select(Class<T> entityClass, Predicate<TableFieldInfo> predicate) {
         wrapperChildren.select(entityClass, predicate);
         return typedThis;
     }

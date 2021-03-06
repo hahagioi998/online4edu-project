@@ -10,14 +10,14 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public interface QueryMapper<T, DTO extends T, PK extends Serializable> {
+public interface QueryMapper<T, V extends T> {
 
     /**
      * 根据 ID 查询
      *
      * @param id 主键ID
      */
-    T selectById(PK id);
+    T selectById(Serializable id);
 
     /**
      * 根据 entity 条件，查询一条记录

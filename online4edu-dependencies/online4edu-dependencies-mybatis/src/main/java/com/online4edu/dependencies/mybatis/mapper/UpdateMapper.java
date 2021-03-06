@@ -4,9 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import org.apache.ibatis.annotations.Param;
 
-import java.io.Serializable;
-
-public interface UpdateMapper<T, DTO extends T, PK extends Serializable> {
+public interface UpdateMapper<T, V extends T> {
 
     /**
      * 根据 ID 修改
@@ -29,4 +27,13 @@ public interface UpdateMapper<T, DTO extends T, PK extends Serializable> {
      * @param entity 实体对象
      */
     int alwaysUpdateSomeColumnById(T entity);
+
+
+    /**
+     * 根据 ID 修改
+     *
+     * @param entity 实体对象
+     * @return 更新结果
+     */
+    int updateAllColumnById(@Param(Constants.ENTITY) T entity);
 }

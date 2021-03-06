@@ -22,7 +22,7 @@ import java.util.function.Function;
  * @date 2021/03/05 18:57
  * @see com.baomidou.mybatisplus.core.mapper.BaseMapper
  */
-public interface QueryService<T, DTO extends T, PK extends Serializable> {
+public interface QueryService<T, V extends T> {
 
     /**
      * 根据 ID 查询
@@ -30,7 +30,7 @@ public interface QueryService<T, DTO extends T, PK extends Serializable> {
      * @param id 主键ID
      * @return entity
      */
-    T getById(PK id);
+    T getById(Serializable id);
 
     /**
      * 根据 Wrapper，查询一条记录
@@ -155,7 +155,7 @@ public interface QueryService<T, DTO extends T, PK extends Serializable> {
      * @param mapper  自定义mapper
      * @return page
      */
-    <R> IPage<R> pageEntities(IPage<R> page, Wrapper<T> wrapper, Function<? super T, R> mapper);
+    <R> IPage<R> pageEntities(IPage page, Wrapper<T> wrapper, Function<? super T, R> mapper);
 
     /**
      * 根据 Wrapper，查询一条自定义对象记录

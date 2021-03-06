@@ -14,7 +14,7 @@ import java.io.Serializable;
  * @author Shilin <br > mingrn97@gmail.com
  * @date 2021/03/05 23:44
  */
-public interface DeleteService<T, DTO extends T, PK extends Serializable> {
+public interface DeleteService<T, V extends T> {
 
     /**
      * 根据 ID 删除
@@ -22,7 +22,7 @@ public interface DeleteService<T, DTO extends T, PK extends Serializable> {
      * @param id 主键ID
      * @return 删除成功返回 true, 否则删除失败
      */
-    boolean deleteById(PK id);
+    boolean deleteById(Serializable id);
 
     /**
      * 删除所有记录

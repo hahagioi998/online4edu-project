@@ -8,14 +8,14 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
 
-public interface DeleteMapper<T, DTO extends T, PK extends Serializable> {
+public interface DeleteMapper<T, V extends T> {
 
     /**
      * 根据 ID 删除
      *
      * @param id 主键ID
      */
-    int deleteById(PK id);
+    int deleteById(Serializable id);
 
     /**
      * 根据 columnMap 条件，删除记录

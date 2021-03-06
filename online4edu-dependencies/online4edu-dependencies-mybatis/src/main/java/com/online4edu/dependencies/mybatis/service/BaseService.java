@@ -4,8 +4,6 @@ import com.online4edu.dependencies.mybatis.chain.LambdaDeleteWrapperChain;
 import com.online4edu.dependencies.mybatis.chain.LambdaQueryWrapperChain;
 import com.online4edu.dependencies.mybatis.chain.LambdaUpdateWrapperChain;
 
-import java.io.Serializable;
-
 /**
  * 通用Service
  *
@@ -16,15 +14,15 @@ import java.io.Serializable;
  * @date 2021/03/05 23:59
  * @see com.baomidou.mybatisplus.core.mapper.BaseMapper
  */
-public interface BaseService<T, DTO extends T, PK extends Serializable>
-        extends DeleteService<T, DTO, PK>, SaveService<T, DTO, PK>, QueryService<T, DTO, PK> {
+public interface BaseService<T, V extends T>
+        extends DeleteService<T, V>, SaveService<T, V>, QueryService<T, V> {
 
     /**
      * Lambda 查看链
      *
      * @return chain
      */
-    default LambdaQueryWrapperChain<T, DTO, PK> query() {
+    default LambdaQueryWrapperChain<T, V> query() {
         return new LambdaQueryWrapperChain<>(this);
     }
 
@@ -33,7 +31,7 @@ public interface BaseService<T, DTO extends T, PK extends Serializable>
      *
      * @return chain
      */
-    default LambdaUpdateWrapperChain<T, DTO, PK> update() {
+    default LambdaUpdateWrapperChain<T, V> update() {
         return new LambdaUpdateWrapperChain<>(this);
     }
 
@@ -42,7 +40,7 @@ public interface BaseService<T, DTO extends T, PK extends Serializable>
      *
      * @return chain
      */
-    default LambdaDeleteWrapperChain<T, DTO, PK> delete() {
+    default LambdaDeleteWrapperChain<T, V> delete() {
         return new LambdaDeleteWrapperChain<>(this);
     }
 }

@@ -1,7 +1,5 @@
 package com.online4edu.dependencies.mybatis.mapper;
 
-import java.io.Serializable;
-
 /**
  * 基础 Mapper
  *
@@ -12,7 +10,7 @@ import java.io.Serializable;
  * @date 2021/03/06 00:08
  * @see com.baomidou.mybatisplus.core.mapper.BaseMapper
  */
-public interface BaseMapper<T, DTO extends T, PK extends Serializable>
-        extends InsertMapper<T, DTO, PK>, DeleteMapper<T, DTO, PK>, UpdateMapper<T, DTO, PK>, QueryMapper<T, DTO, PK> {
+public interface BaseMapper<T, V extends T>
+        extends InsertMapper<T, V>, DeleteMapper<T, V>, UpdateMapper<T, V>, QueryMapper<T, V> {
 
 }
