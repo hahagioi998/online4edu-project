@@ -10,6 +10,7 @@
     <modules>
         <module>online4edu-dependencies</module>
         <module>online4edu-app</module>
+        <module>online4edu-api</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -35,6 +36,7 @@
         <commons-io.version>2.6</commons-io.version>
         <lombok.version>1.18.16</lombok.version>
         <modelmapper.version>2.3.1</modelmapper.version>
+        <httpcomponents-client>4.5.13</httpcomponents-client>
     </properties>
 
     <dependencyManagement>
@@ -68,7 +70,12 @@
                 <scope>import</scope>
             </dependency>
 
-            <!-- =========================================== 依赖 ==============================================-->
+            <!-- ====================================== Project Dependencies ========================================-->
+            <dependency>
+                <groupId>com.online4edu</groupId>
+                <artifactId>online4edu-dependencies</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <dependency>
                 <groupId>com.online4edu</groupId>
                 <artifactId>online4edu-dependencies-mybatis</artifactId>
@@ -79,14 +86,10 @@
                 <artifactId>online4edu-dependencies-utils</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <dependency>
-                <groupId>com.online4edu</groupId>
-                <artifactId>online4edu-dependencies</artifactId>
-                <version>${project.version}</version>
-            </dependency>
+            <!-- ========================================== Project APT =============================================-->
 
 
-            <!-- =========================================== 依赖 ==============================================-->
+            <!-- ============================================== 依赖 =================================================-->
 
             <dependency>
                 <groupId>mysql</groupId>
@@ -149,6 +152,12 @@
                 <groupId>org.modelmapper</groupId>
                 <artifactId>modelmapper</artifactId>
                 <version>${modelmapper.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpcomponents-client</artifactId>
+                <version>${httpcomponents-client}</version>
             </dependency>
 
         </dependencies>
