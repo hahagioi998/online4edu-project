@@ -1,7 +1,5 @@
 package com.online4edu.dependencies.utils.converter;
 
-import com.alibaba.nacos.api.exception.runtime.NacosDeserializationException;
-import com.alibaba.nacos.api.exception.runtime.NacosSerializationException;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -12,11 +10,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.sun.xml.internal.ws.encoding.soap.DeserializationException;
+import com.online4edu.dependencies.utils.exception.EduDeserializationException;
+import com.online4edu.dependencies.utils.exception.EduSerializationException;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 /**
  * Json utils implement by Jackson.
@@ -37,13 +39,13 @@ public final class JacksonUtils {
      *
      * @param obj obj
      * @return json string
-     * @throws NacosSerializationException if transfer failed
+     * @throws EduSerializationException if transfer failed
      */
     public static String toJson(Object obj) {
         try {
             return mapper.writeValueAsString(obj);
         } catch (JsonProcessingException e) {
-            throw new NacosSerializationException(obj.getClass(), e);
+            throw new EduSerializationException(obj.getClass(), e);
         }
     }
 
@@ -52,13 +54,17 @@ public final class JacksonUtils {
      *
      * @param obj obj
      * @return json string byte array
-     * @throws NacosSerializationException if transfer failed
+     * @throws EduSerializationException if transfer failed
      */
     public static byte[] toJsonBytes(Object obj) {
         try {
-            return ByteUtils.toBytes(mapper.writeValueAsString(obj));
+            String json = mapper.writeValueAsString(obj);
+            if (StringUtils.isNotBlank(json)) {
+                return json.getBytes(StandardCharsets.UTF_8);
+            }
+            return new byte[0];
         } catch (JsonProcessingException e) {
-            throw new NacosSerializationException(obj.getClass(), e);
+            throw new EduSerializationException(obj.getClass(), e);
         }
     }
 
@@ -69,14 +75,14 @@ public final class JacksonUtils {
      * @param cls  class of object
      * @param <T>  General type
      * @return object
-     * @throws NacosDeserializationException if deserialize failed
+     * @throws EduDeserializationException if deserialize failed
      */
     public static <T> T toObj(byte[] json, Class<T> cls) {
         try {
-            return toObj(StringUtils.newStringForUtf8(json), cls);
+            return toObj(new String(json, StandardCharsets.UTF_8), cls);
         } catch (Exception e) {
 
-            throw new DeserializationException(cls, e);
+            throw new EduDeserializationException(cls, e);
         }
     }
 
@@ -87,13 +93,13 @@ public final class JacksonUtils {
      * @param cls  {@link Type} of object
      * @param <T>  General type
      * @return object
-     * @throws NacosDeserializationException if deserialize failed
+     * @throws EduDeserializationException if deserialize failed
      */
     public static <T> T toObj(byte[] json, Type cls) {
         try {
-            return toObj(StringUtils.newStringForUtf8(json), cls);
+            return toObj(new String(json, StandardCharsets.UTF_8), cls);
         } catch (Exception e) {
-            throw new NacosDeserializationException(e);
+            throw new EduDeserializationException(e);
         }
     }
 
@@ -104,13 +110,13 @@ public final class JacksonUtils {
      * @param cls         class of object
      * @param <T>         General type
      * @return object
-     * @throws NacosDeserializationException if deserialize failed
+     * @throws EduDeserializationException if deserialize failed
      */
     public static <T> T toObj(InputStream inputStream, Class<T> cls) {
         try {
             return mapper.readValue(inputStream, cls);
         } catch (IOException e) {
-            throw new NacosDeserializationException(e);
+            throw new EduDeserializationException(e);
         }
     }
 
@@ -121,13 +127,13 @@ public final class JacksonUtils {
      * @param typeReference {@link TypeReference} of object
      * @param <T>           General type
      * @return object
-     * @throws NacosDeserializationException if deserialize failed
+     * @throws EduDeserializationException if deserialize failed
      */
     public static <T> T toObj(byte[] json, TypeReference<T> typeReference) {
         try {
-            return toObj(StringUtils.newStringForUtf8(json), typeReference);
+            return toObj(new String(json, StandardCharsets.UTF_8), typeReference);
         } catch (Exception e) {
-            throw new NacosDeserializationException(e);
+            throw new EduDeserializationException(e);
         }
     }
 
@@ -138,13 +144,13 @@ public final class JacksonUtils {
      * @param cls  class of object
      * @param <T>  General type
      * @return object
-     * @throws NacosDeserializationException if deserialize failed
+     * @throws EduDeserializationException if deserialize failed
      */
     public static <T> T toObj(String json, Class<T> cls) {
         try {
             return mapper.readValue(json, cls);
         } catch (IOException e) {
-            throw new NacosDeserializationException(cls, e);
+            throw new EduDeserializationException(cls, e);
         }
     }
 
@@ -155,13 +161,13 @@ public final class JacksonUtils {
      * @param type {@link Type} of object
      * @param <T>  General type
      * @return object
-     * @throws NacosDeserializationException if deserialize failed
+     * @throws EduDeserializationException if deserialize failed
      */
     public static <T> T toObj(String json, Type type) {
         try {
             return mapper.readValue(json, mapper.constructType(type));
         } catch (IOException e) {
-            throw new NacosDeserializationException(e);
+            throw new EduDeserializationException(e);
         }
     }
 
@@ -172,13 +178,13 @@ public final class JacksonUtils {
      * @param typeReference {@link TypeReference} of object
      * @param <T>           General type
      * @return object
-     * @throws NacosDeserializationException if deserialize failed
+     * @throws EduDeserializationException if deserialize failed
      */
     public static <T> T toObj(String json, TypeReference<T> typeReference) {
         try {
             return mapper.readValue(json, typeReference);
         } catch (IOException e) {
-            throw new NacosDeserializationException(typeReference.getClass(), e);
+            throw new EduDeserializationException(typeReference.getClass(), e);
         }
     }
 
@@ -189,13 +195,13 @@ public final class JacksonUtils {
      * @param type        {@link Type} of object
      * @param <T>         General type
      * @return object
-     * @throws NacosDeserializationException if deserialize failed
+     * @throws EduDeserializationException if deserialize failed
      */
     public static <T> T toObj(InputStream inputStream, Type type) {
         try {
             return mapper.readValue(inputStream, mapper.constructType(type));
         } catch (IOException e) {
-            throw new NacosDeserializationException(type, e);
+            throw new EduDeserializationException(type, e);
         }
     }
 
@@ -204,13 +210,13 @@ public final class JacksonUtils {
      *
      * @param json json string
      * @return {@link JsonNode}
-     * @throws NacosDeserializationException if deserialize failed
+     * @throws EduDeserializationException if deserialize failed
      */
     public static JsonNode toObj(String json) {
         try {
             return mapper.readTree(json);
         } catch (IOException e) {
-            throw new NacosDeserializationException(e);
+            throw new EduDeserializationException(e);
         }
     }
 

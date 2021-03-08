@@ -6,7 +6,7 @@
 
     <groupId>com.online4edu</groupId>
     <artifactId>online4edu-project</artifactId>
-    <version>${revision}</version>
+    <version>0.0.1-SNAPSHOT</version>
     <modules>
         <module>online4edu-dependencies</module>
         <module>online4edu-app</module>
@@ -16,19 +16,29 @@
     <name>online4edu-project</name>
 
     <properties>
-        <revision>0.0.1-SNAPSHOT</revision>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <spring-boot.version>2.0.5.RELEASE</spring-boot.version>
-        <spring-cloud.version>Finchley.RC2</spring-cloud.version>
+        <spring-boot.version>2.1.17.RELEASE</spring-boot.version>
+        <spring-cloud.version>Greenwich.SR6</spring-cloud.version>
         <spring-cloud-alibaba.version>2.0.3.RELEASE</spring-cloud-alibaba.version>
+
+        <!-- 依赖 -->
+        <mysql.version>5.1.47</mysql.version>
+        <mybatis-plus.version>3.3.0</mybatis-plus.version>
+        <druid-connection.version>1.2.2</druid-connection.version>
+        <jackson.version>2.9.10</jackson.version>
+        <commons-lang3.version>3.11</commons-lang3.version>
+        <commons-collections4.version>4.4</commons-collections4.version>
+        <commons-beanutils.version>1.9.3</commons-beanutils.version>
+        <commons-io.version>2.6</commons-io.version>
+        <lombok.version>1.18.16</lombok.version>
+        <modelmapper.version>2.3.1</modelmapper.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
-
             <!-- Import dependency management from Spring Boot -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
@@ -39,7 +49,7 @@
             </dependency>
 
             <!-- Import dependency management from Spring Cloud -->
-            <!-- Spring Cloud 与 Spring Boot 版本关系: https://spring.io/projects/spring-cloudc -->
+            <!-- Spring Cloud 与 Spring Boot 版本关系: https://spring.io/projects/spring-cloud -->
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
@@ -57,8 +67,93 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
+            <!-- =========================================== 依赖 ==============================================-->
+            <dependency>
+                <groupId>com.online4edu</groupId>
+                <artifactId>online4edu-dependencies-mybatis</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.online4edu</groupId>
+                <artifactId>online4edu-dependencies-utils</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.online4edu</groupId>
+                <artifactId>online4edu-dependencies</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+
+            <!-- =========================================== 依赖 ==============================================-->
+
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+
+            <!--<dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>druid</artifactId>
+                <version>${druid-connection.version}</version>
+            </dependency>-->
+
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>druid-spring-boot-starter</artifactId>
+                <version>${druid-connection.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons-lang3.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-collections4</artifactId>
+                <version>${commons-collections4.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-beanutils</groupId>
+                <artifactId>commons-beanutils</artifactId>
+                <version>${commons-beanutils.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons-io.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.modelmapper</groupId>
+                <artifactId>modelmapper</artifactId>
+                <version>${modelmapper.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
+
 
     <build>
         <pluginManagement>
@@ -72,6 +167,15 @@
         </pluginManagement>
 
         <plugins>
+            <!-- 版本控制 -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>2.3</version>
+                <configuration>
+                    <generateBackupPoms>false</generateBackupPoms>
+                </configuration>
+            </plugin>
             <!-- 编译版本 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -86,7 +190,6 @@
                     </compilerArgs>
                 </configuration>
             </plugin>
-
             <!-- 发布源码 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -107,4 +210,15 @@
         </plugins>
     </build>
 
+    <!-- 发布私服 -->
+    <distributionManagement>
+        <repository>
+            <id>rdc-releases</id>
+            <url>https://repo.rdc.aliyun.com/repository/69112-release-5uMTYP/</url>
+        </repository>
+        <snapshotRepository>
+            <id>rdc-snapshots</id>
+            <url>https://repo.rdc.aliyun.com/repository/69112-snapshot-CJES1m/</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>
