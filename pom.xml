@@ -223,11 +223,12 @@
     <distributionManagement>
         <repository>
             <id>rdc-releases</id>
-            <url>https://repo.rdc.aliyun.com/repository/69112-release-5uMTYP/</url>
+            <url>https://repo.rdc.aliyun.com/repository/137133-release-uSYOI7/</url>
         </repository>
         <snapshotRepository>
             <id>rdc-snapshots</id>
-            <url>https://repo.rdc.aliyun.com/repository/69112-snapshot-CJES1m/</url>
+            <url>https://repo.rdc.aliyun.com/repository/137133-snapshot-GgtTxU/</url>
         </snapshotRepository>
     </distributionManagement>
+
 </project>
