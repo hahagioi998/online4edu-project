@@ -3,6 +3,7 @@ package com.online4edu.dependencies.mybatis.injector;
 import com.baomidou.mybatisplus.core.injector.AbstractMethod;
 import com.baomidou.mybatisplus.core.injector.AbstractSqlInjector;
 import com.baomidou.mybatisplus.core.injector.methods.*;
+import com.online4edu.dependencies.mybatis.injector.methods.UpdateAllColumnById;
 
 import java.util.List;
 import java.util.stream.Collectors;

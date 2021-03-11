@@ -31,7 +31,9 @@ public interface SaveService<T, V extends T>
      * @param entityList 实体对象集合
      * @return 保存成功返回true, 否则返回false
      */
-    boolean insertOrUpdateBatch(Collection<T> entityList);
+    default boolean insertOrUpdateBatch(Collection<T> entityList) {
+        throw new UnsupportedOperationException("该功能当前未做实现, 不支持使用");
+    }
 
 
     /**
@@ -45,7 +47,9 @@ public interface SaveService<T, V extends T>
      * @return 成功执行行数
      * @see com.baomidou.mybatisplus.annotation.TableName
      */
-    int up(Serializable id, Class<T> currentModelClass);
+    default int up(Serializable id, Class<T> currentModelClass) {
+        throw new UnsupportedOperationException("该功能当前未做实现, 不支持使用");
+    }
 
     /**
      * 下移
@@ -58,7 +62,9 @@ public interface SaveService<T, V extends T>
      * @return 成功执行行数
      * @see com.baomidou.mybatisplus.annotation.TableName
      */
-    int down(Serializable id, Class<T> currentModelClass);
+    default int down(Serializable id, Class<T> currentModelClass) {
+        throw new UnsupportedOperationException("该功能当前未做实现, 不支持使用");
+    }
 
     /**
      * 置顶
@@ -71,5 +77,7 @@ public interface SaveService<T, V extends T>
      * @return 成功执行行数
      * @see com.baomidou.mybatisplus.annotation.TableName
      */
-    int top(Serializable id, Class<T> currentModelClass);
+    default int top(Serializable id, Class<T> currentModelClass) {
+        throw new UnsupportedOperationException("该功能当前未做实现, 不支持使用");
+    }
 }

@@ -63,5 +63,7 @@ public interface UpdateService<T, V extends T> {
      * @param entityList 实体对象集合
      * @param batchSize  更新批次数量
      */
-    void updateBatchById(Collection<T> entityList, int batchSize);
+    default void updateBatchById(Collection<T> entityList, int batchSize) {
+        throw new UnsupportedOperationException("该功能当前未做实现, 不支持使用");
+    }
 }

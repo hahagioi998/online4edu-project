@@ -5,7 +5,10 @@ import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
-import com.baomidou.mybatisplus.core.toolkit.*;
+import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.core.toolkit.LambdaUtils;
+import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
@@ -13,7 +16,6 @@ import com.online4edu.dependencies.mybatis.mapper.BaseMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.session.SqlSession;
 import org.mybatis.spring.SqlSessionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -151,7 +153,7 @@ public abstract class BaseServiceImpl<T, V extends T>
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateBatchById(Collection<T> entityList, int batchSize) {
-        if (CollectionUtils.isNotEmpty(entityList)) {
+        /*if (CollectionUtils.isNotEmpty(entityList)) {
             int i = 0;
             String sqlStatement = sqlStatement(SqlMethod.UPDATE_BY_ID);
             try (SqlSession batchSqlSession = sqlSessionBatch()) {
@@ -166,7 +168,8 @@ public abstract class BaseServiceImpl<T, V extends T>
                 }
                 batchSqlSession.flushStatements();
             }
-        }
+        }*/
+        throw new UnsupportedOperationException("该功能当前未做实现, 不支持使用");
     }
 
     // ========================================== Update =========================================================
@@ -198,23 +201,22 @@ public abstract class BaseServiceImpl<T, V extends T>
 
     @Override
     public boolean insertOrUpdateBatch(Collection<T> entityList) {
-        // TODO: 2021/3/6 后续实现
-        return false;
+        throw new UnsupportedOperationException("该功能当前未做实现, 不支持使用");
     }
 
     @Override
     public int up(Serializable id, Class<T> currentModelClass) {
-        return 0;
+        throw new UnsupportedOperationException("该功能当前未做实现, 不支持使用");
     }
 
     @Override
     public int down(Serializable id, Class<T> currentModelClass) {
-        return 0;
+        throw new UnsupportedOperationException("该功能当前未做实现, 不支持使用");
     }
 
     @Override
     public int top(Serializable id, Class<T> currentModelClass) {
-        return 0;
+        throw new UnsupportedOperationException("该功能当前未做实现, 不支持使用");
     }
 
     // ========================================== DELETE =========================================================

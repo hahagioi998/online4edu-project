@@ -1,4 +1,4 @@
-package com.online4edu.dependencies.mybatis.injector;
+package com.online4edu.dependencies.mybatis.injector.methods;
 
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.injector.AbstractMethod;
