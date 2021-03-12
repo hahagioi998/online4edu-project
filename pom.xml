@@ -39,6 +39,7 @@
         <freemarker.version>2.3.30</freemarker.version>
         <guava.version>29.0-jre</guava.version>
         <joda-time.version>2.10.6</joda-time.version>
+        <swagger.version>2.7.0</swagger.version>
     </properties>
 
     <dependencyManagement>
@@ -183,6 +184,17 @@
                 <groupId>joda-time</groupId>
                 <artifactId>joda-time</artifactId>
                 <version>${joda-time.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger2</artifactId>
+                <version>${swagger.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger-ui</artifactId>
+                <version>${swagger.version}</version>
             </dependency>
 
         </dependencies>

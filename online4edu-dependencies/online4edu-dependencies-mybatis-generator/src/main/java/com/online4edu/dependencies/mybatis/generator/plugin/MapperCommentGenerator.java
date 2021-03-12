@@ -74,9 +74,6 @@ public class MapperCommentGenerator implements CommentGenerator {
 
     /**
      * 删除标记
-     *
-     * @param javaElement
-     * @param markAsDoNotDelete
      */
     protected void addJavadocTag(JavaElement javaElement, boolean markAsDoNotDelete) {
         StringBuilder sb = new StringBuilder();
@@ -111,57 +108,58 @@ public class MapperCommentGenerator implements CommentGenerator {
      */
     @Override
     public void addFieldComment(Field field, IntrospectedTable introspectedTable, IntrospectedColumn introspectedColumn) {
-        if (StringUtility.stringHasValue(introspectedColumn.getRemarks())) {
-            field.addJavaDocLine("/**");
-            StringBuilder sb = new StringBuilder();
-            sb.append(" * ");
-            sb.append(introspectedColumn.getRemarks());
-            field.addJavaDocLine(sb.toString());
-            field.addJavaDocLine(" */");
-        }
-        //添加注解
+
+//        if (StringUtility.stringHasValue(introspectedColumn.getRemarks())) {
+//            field.addJavaDocLine("/**");
+//            StringBuilder sb = new StringBuilder();
+//            sb.append(" * ");
+//            sb.append(introspectedColumn.getRemarks());
+//            field.addJavaDocLine(sb.toString());
+//            field.addJavaDocLine(" */");
+//        }
+
+        // 添加注解
         if (field.isTransient()) {
-            //@Column
             field.addAnnotation("@Transient");
         }
-        for (IntrospectedColumn column : introspectedTable.getPrimaryKeyColumns()) {
+        /*for (IntrospectedColumn column : introspectedTable.getPrimaryKeyColumns()) {
             if (introspectedColumn == column) {
                 field.addAnnotation("@Id");
                 break;
             }
-        }
+        }*/
         String column = introspectedColumn.getActualColumnName();
         if (StringUtility.stringContainsSpace(column) || introspectedTable.getTableConfiguration().isAllColumnDelimitingEnabled()) {
             column = introspectedColumn.getContext().getBeginningDelimiter()
                     + column
                     + introspectedColumn.getContext().getEndingDelimiter();
         }
-        if (!column.equals(introspectedColumn.getJavaProperty())) {
-            //@Column
-            field.addAnnotation("@Column(name = \"" + getDelimiterName(column) + "\")");
-        } else if (StringUtility.stringHasValue(beginningDelimiter) || StringUtility.stringHasValue(endingDelimiter)) {
-            field.addAnnotation("@Column(name = \"" + getDelimiterName(column) + "\")");
-        }
+
+
+        field.addAnnotation("@ApiModelProperty(\"" + introspectedColumn.getRemarks() + "\")");
+
+//        if (!column.equals(introspectedColumn.getJavaProperty())) {
+//            //@Column
+//            field.addAnnotation("@Column(name = \"" + getDelimiterName(column) + "\")");
+//        } else if (StringUtility.stringHasValue(beginningDelimiter) || StringUtility.stringHasValue(endingDelimiter)) {
+//            field.addAnnotation("@Column(name = \"" + getDelimiterName(column) + "\")");
+//        }
+
         if (introspectedColumn.isIdentity()) {
-            if (introspectedTable.getTableConfiguration().getGeneratedKey().getRuntimeSqlStatement().equals("JDBC")) {
+            field.addAnnotation("@TableId(type = IdType.AUTO)");
+            /*if (introspectedTable.getTableConfiguration().getGeneratedKey().getRuntimeSqlStatement().equals("JDBC")) {
                 field.addAnnotation("@GeneratedValue(generator = \"JDBC\")");
             } else {
                 field.addAnnotation("@GeneratedValue(strategy = GenerationType.IDENTITY)");
-            }
+            }*/
         } else if (introspectedColumn.isSequenceColumn()) {
-            //在 Oracle 中,如果需要是 SEQ_TABLENAME,那么可以配置为 select SEQ_{1} from dual
-            String tableName = introspectedTable.getFullyQualifiedTableNameAtRuntime();
+            // 在 Oracle 中,如果需要是 SEQ_TABLENAME, 那么可以配置为 select SEQ_{1} from dual
+            /*String tableName = introspectedTable.getFullyQualifiedTableNameAtRuntime();
             String sql = MessageFormat.format(introspectedTable.getTableConfiguration().getGeneratedKey().getRuntimeSqlStatement(), tableName, tableName.toUpperCase());
-            field.addAnnotation("@GeneratedValue(strategy = GenerationType.IDENTITY, generator = \"" + sql + "\")");
+            field.addAnnotation("@GeneratedValue(strategy = GenerationType.IDENTITY, generator = \"" + sql + "\")");*/
         }
     }
 
-    /**
-     * Example使用
-     *
-     * @param field
-     * @param introspectedTable
-     */
     @Override
     public void addFieldComment(Field field, IntrospectedTable introspectedTable) {
     }
@@ -171,78 +169,60 @@ public class MapperCommentGenerator implements CommentGenerator {
 
     }
 
-    /**
-     * @param method
-     * @param introspectedTable
-     */
     @Override
     public void addGeneralMethodComment(Method method, IntrospectedTable introspectedTable) {
     }
 
     /**
      * getter方法注释
-     *
-     * @param method
-     * @param introspectedTable
-     * @param introspectedColumn
      */
     @Override
     public void addGetterComment(Method method, IntrospectedTable introspectedTable, IntrospectedColumn introspectedColumn) {
-        StringBuilder sb = new StringBuilder();
-        method.addJavaDocLine("/**");
-        if (StringUtility.stringHasValue(introspectedColumn.getRemarks())) {
-            sb.append(" * 获取");
-            sb.append(introspectedColumn.getRemarks());
-            method.addJavaDocLine(sb.toString());
-            method.addJavaDocLine(" *");
-        }
-        sb.setLength(0);
-        sb.append(" * @return ");
-        sb.append(introspectedColumn.getActualColumnName());
-        if (StringUtility.stringHasValue(introspectedColumn.getRemarks())) {
-            sb.append(" - ");
-            sb.append(introspectedColumn.getRemarks());
-        }
-        method.addJavaDocLine(sb.toString());
-        method.addJavaDocLine(" */");
+//        StringBuilder sb = new StringBuilder();
+//        method.addJavaDocLine("/**");
+//        if (StringUtility.stringHasValue(introspectedColumn.getRemarks())) {
+//            sb.append(" * 获取");
+//            sb.append(introspectedColumn.getRemarks());
+//            method.addJavaDocLine(sb.toString());
+//            method.addJavaDocLine(" *");
+//        }
+//        sb.setLength(0);
+//        sb.append(" * @return ");
+//        sb.append(introspectedColumn.getActualColumnName());
+//        if (StringUtility.stringHasValue(introspectedColumn.getRemarks())) {
+//            sb.append(" - ");
+//            sb.append(introspectedColumn.getRemarks());
+//        }
+//        method.addJavaDocLine(sb.toString());
+//        method.addJavaDocLine(" */");
     }
 
     /**
      * setter方法注释
-     *
-     * @param method
-     * @param introspectedTable
-     * @param introspectedColumn
      */
     @Override
     public void addSetterComment(Method method, IntrospectedTable introspectedTable, IntrospectedColumn introspectedColumn) {
-        StringBuilder sb = new StringBuilder();
-        method.addJavaDocLine("/**");
-        if (StringUtility.stringHasValue(introspectedColumn.getRemarks())) {
-            sb.append(" * 设置");
-            sb.append(introspectedColumn.getRemarks());
-            method.addJavaDocLine(sb.toString());
-            method.addJavaDocLine(" *");
-        }
-        Parameter parm = method.getParameters().get(0);
-        sb.setLength(0);
-        sb.append(" * @param ");
-        sb.append(parm.getName());
-        if (StringUtility.stringHasValue(introspectedColumn.getRemarks())) {
-            sb.append(" ");
-            sb.append(introspectedColumn.getRemarks());
-        }
-        method.addJavaDocLine(sb.toString());
-        method.addJavaDocLine(" */");
+//        StringBuilder sb = new StringBuilder();
+//        method.addJavaDocLine("/**");
+//        if (StringUtility.stringHasValue(introspectedColumn.getRemarks())) {
+//            sb.append(" * 设置");
+//            sb.append(introspectedColumn.getRemarks());
+//            method.addJavaDocLine(sb.toString());
+//            method.addJavaDocLine(" *");
+//        }
+//        Parameter parm = method.getParameters().get(0);
+//        sb.setLength(0);
+//        sb.append(" * @param ");
+//        sb.append(parm.getName());
+//        if (StringUtility.stringHasValue(introspectedColumn.getRemarks())) {
+//            sb.append(" ");
+//            sb.append(introspectedColumn.getRemarks());
+//        }
+//        method.addJavaDocLine(sb.toString());
+//        method.addJavaDocLine(" */");
     }
 
-    /**
-     * Example使用
-     *
-     * @param innerClass
-     * @param introspectedTable
-     * @param markAsDoNotDelete
-     */
+
     @Override
     public void addClassComment(InnerClass innerClass, IntrospectedTable introspectedTable, boolean markAsDoNotDelete) {
     }

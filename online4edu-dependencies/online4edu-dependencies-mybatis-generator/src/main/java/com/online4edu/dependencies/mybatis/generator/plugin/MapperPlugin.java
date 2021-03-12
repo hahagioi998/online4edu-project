@@ -1,5 +1,6 @@
 package com.online4edu.dependencies.mybatis.generator.plugin;
 
+import org.apache.commons.lang3.StringUtils;
 import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.PluginAdapter;
 import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
@@ -11,13 +12,10 @@ import org.mybatis.generator.config.CommentGeneratorConfiguration;
 import org.mybatis.generator.config.Context;
 import org.mybatis.generator.internal.util.StringUtility;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 
 /**
- * mapper 插件
+ * 生成 mapper 增强插件
  *
  * @author Shilin <br > mingrn97@gmail.com
  * @date 2021/03/12 10:22
@@ -64,9 +62,7 @@ public class MapperPlugin extends PluginAdapter {
         super.setProperties(properties);
         String mappers = this.properties.getProperty("mappers");
         if (StringUtility.stringHasValue(mappers)) {
-            for (String mapper : mappers.split(",")) {
-                this.mappers.add(mapper);
-            }
+            this.mappers.addAll(Arrays.asList(mappers.split(",")));
         } else {
             throw new MapperException("Mapper插件缺少必要的mappers属性!");
         }
@@ -131,13 +127,23 @@ public class MapperPlugin extends PluginAdapter {
 
     /**
      * 处理实体类的包和@Table注解
-     *
-     * @param topLevelClass
-     * @param introspectedTable
      */
     private void processEntityClass(TopLevelClass topLevelClass, IntrospectedTable introspectedTable) {
-        //引入JPA注解
-        topLevelClass.addImportedType("javax.persistence.*");
+
+        // 在类上导入包
+        topLevelClass.addImportedType("com.baomidou.mybatisplus.annotation.*");
+        topLevelClass.addImportedType("io.swagger.annotations.ApiModel");
+        topLevelClass.addImportedType("io.swagger.annotations.ApiModelProperty");
+        topLevelClass.addImportedType("lombok.*");
+
+        // 增加注解
+        topLevelClass.addAnnotation("@Getter");
+        topLevelClass.addAnnotation("@Setter");
+        topLevelClass.addAnnotation("@ToString");
+        topLevelClass.addAnnotation("@NoArgsConstructor");
+        topLevelClass.addAnnotation("@EqualsAndHashCode(callSuper = false)");
+
+
         String tableName = introspectedTable.getFullyQualifiedTableNameAtRuntime();
         //如果包含空格,或者需要分隔符,需要完善
         if (StringUtility.stringContainsSpace(tableName)) {
@@ -145,8 +151,11 @@ public class MapperPlugin extends PluginAdapter {
                     + tableName
                     + context.getEndingDelimiter();
         }
+
+        topLevelClass.addAnnotation("@TableName(\"" + tableName.toLowerCase() + "\")");
+
         //是否忽略大小写,对于区分大小写的数据库,会有用
-        if (caseSensitive && !topLevelClass.getType().getShortName().equals(tableName)) {
+        /*if (caseSensitive && !topLevelClass.getType().getShortName().equals(tableName)) {
             topLevelClass.addAnnotation("@Table(name = \"" + getDelimiterName(tableName) + "\")");
         } else if (!topLevelClass.getType().getShortName().equalsIgnoreCase(tableName)) {
             topLevelClass.addAnnotation("@Table(name = \"" + getDelimiterName(tableName) + "\")");
@@ -154,7 +163,15 @@ public class MapperPlugin extends PluginAdapter {
                 || StringUtility.stringHasValue(beginningDelimiter)
                 || StringUtility.stringHasValue(endingDelimiter)) {
             topLevelClass.addAnnotation("@Table(name = \"" + getDelimiterName(tableName) + "\")");
+        }*/
+
+        String remarks = introspectedTable.getRemarks();
+        if (StringUtils.isNotBlank(remarks)) {
+            topLevelClass.addAnnotation("@ApiModel(\"" + remarks.trim() + "\")");
         }
+
+        topLevelClass.addImportedType(new FullyQualifiedJavaType("com.online4edu.dependencies.utils.converter.Convert"));
+        topLevelClass.setSuperClass(new FullyQualifiedJavaType("Convert"));
     }
 
     /**
@@ -167,6 +184,19 @@ public class MapperPlugin extends PluginAdapter {
     @Override
     public boolean modelBaseRecordClassGenerated(TopLevelClass topLevelClass, IntrospectedTable introspectedTable) {
         processEntityClass(topLevelClass, introspectedTable);
+
+        // 一处内省方法
+        // 去除 getter/setter
+        List<Method> methods = topLevelClass.getMethods();
+        Iterator<Method> iterator = methods.iterator();
+        while (iterator.hasNext()) {
+            Method next = iterator.next();
+            String methodName = next.getName();
+            if (methodName.startsWith("get") || methodName.startsWith("set") || methodName.startsWith("is")) {
+                iterator.remove();
+            }
+        }
+
         return true;
     }
 
@@ -196,7 +226,10 @@ public class MapperPlugin extends PluginAdapter {
         return false;
     }
 
-    //下面所有return false的方法都不生成。这些都是基础的CRUD方法,使用通用Mapper实现
+    /**
+     * 下面所有return false的方法都不生成。这些都是基础的CRUD方法,使用通用Mapper实现
+     */
+
     @Override
     public boolean clientDeleteByPrimaryKeyMethodGenerated(Method method, TopLevelClass topLevelClass, IntrospectedTable introspectedTable) {
         return false;

@@ -35,6 +35,7 @@ import java.sql.Types;
  * <pre>
  *     当字符类型为 tinyint 且长度为 1 时, 会被转换成布尔类型.
  *     而虽然文档上说 tinyInt1isBit 取false 时,转Integer.实际上转过来还是 Byte.
+ *     所以, 在此基础上我们还是要做如下配置.
  * </pre>
  *
  *
@@ -86,10 +87,10 @@ public class SimpleJavaTypeResolverImpl extends JavaTypeResolverDefaultImpl {
     public SimpleJavaTypeResolverImpl() {
         super();
 
+
         // 将 tinyint(1) 被映射为 Boolean, 将 tinyint(n) n>1 映射为 Integer
-        typeMap.put(Types.TINYINT,
-                new JavaTypeResolverDefaultImpl.JdbcTypeInformation(
-                        "TINYINT", new FullyQualifiedJavaType(Integer.class.getName())
-                ));
+
+        typeMap.put(Types.TINYINT, new JdbcTypeInformation(
+                "TINYINT", new FullyQualifiedJavaType(Integer.class.getName())));
     }
 }
