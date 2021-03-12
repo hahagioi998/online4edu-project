@@ -3,14 +3,14 @@ package com.online4edu.dependencies.mybatis.generator.domain;
 import java.io.Serializable;
 
 /**
- * 数据表字段信心
+ * 数据表字段信息
  *
  * @author MinGRn <br > MinGRn97@gmail.com
  * @date 2019-07-03 21:55
  */
 public class Column implements Serializable {
 
-    private static final Long serialVersionUID = -1L;
+    private static final long serialVersionUID = 6532448600416890162L;
 
     public Column() {
     }

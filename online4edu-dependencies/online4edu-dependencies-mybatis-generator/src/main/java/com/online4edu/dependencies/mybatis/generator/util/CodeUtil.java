@@ -13,6 +13,7 @@ import java.io.File;
  * @date 18/10/2018 13:05
  */
 public class CodeUtil {
+
     public CodeUtil() {
     }
 
@@ -27,7 +28,9 @@ public class CodeUtil {
      * @param projectPackage 包
      *                       e.g:com.mingrn
      */
-    public static void create(String[][] tableNameArr, String author, String jdbcUrl, String jdbcUser, String jdbcPwd, String projectPath, String projectPackage) {
+    public static void create(String[][] tableNameArr, String author, String jdbcUrl,
+                              String jdbcUser, String jdbcPwd, String projectPath, String projectPackage) {
+
         File file = new File(projectPath);
         if (!file.exists()) {
             file.mkdirs();

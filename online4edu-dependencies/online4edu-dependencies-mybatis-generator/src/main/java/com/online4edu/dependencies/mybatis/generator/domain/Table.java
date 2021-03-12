@@ -11,7 +11,7 @@ import java.util.Date;
  */
 public class Table implements Serializable {
 
-    private static final Long serialVersionUID = -1L;
+    private static final long serialVersionUID = -7497224466254008135L;
 
     /** 表名 */
     private String name;

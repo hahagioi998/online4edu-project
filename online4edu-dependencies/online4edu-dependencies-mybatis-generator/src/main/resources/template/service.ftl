@@ -9,6 +9,6 @@ import java.lang.${pkDataType};
  * @author ${author}
  * @date ${date}
  */
-public interface ${domainNameUpperCamel}Service extends Service<${domainNameUpperCamel}, ${domainNameUpperCamel}DTO, ${pkDataType}> {
+public interface ${domainNameUpperCamel}Service extends Service<${domainNameUpperCamel}, ${domainNameUpperCamel}VO, ${pkDataType}> {
 
 }

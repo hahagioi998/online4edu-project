@@ -55,7 +55,9 @@ public class CodeGenerator {
      * @param constant     包等常量类
      * @param projectPath  项目生成地址
      */
-    public CodeGenerator(String[][] tableNameArr, String author, String jdbcUrl, String jdbcUser, String jdbcPwd, ProjectConstant constant, String projectPath) {
+    public CodeGenerator(String[][] tableNameArr, String author, String jdbcUrl,
+                         String jdbcUser, String jdbcPwd, ProjectConstant constant, String projectPath) {
+
         vo = packageConvertPath(constant.getVo());
         service = packageConvertPath(constant.getService());
         serviceImpl = packageConvertPath(constant.getServiceImpl());
@@ -73,7 +75,9 @@ public class CodeGenerator {
      * @param constant     包等常量类
      * @param projectPath  项目生成地址
      */
-    private static void genCode(String[][] tableNameArr, String author, String jdbcUrl, String jdbcUser, String jdbcPwd, ProjectConstant constant, String projectPath) {
+    private static void genCode(String[][] tableNameArr, String author, String jdbcUrl,
+                                String jdbcUser, String jdbcPwd, ProjectConstant constant, String projectPath) {
+
         File javaDir = new File(projectPath + "/src/main/java");
         if (!javaDir.exists()) {
             javaDir.mkdirs();
@@ -129,7 +133,11 @@ public class CodeGenerator {
      * @param constant    包等常量类
      * @param projectPath 项目生成地址
      */
-    private static void genCodeByCustomDomainName(String tableName, String domainName, String description, String pk, String pkDataType, String author, String jdbcUrl, String jdbcUser, String jdbcPwd, ProjectConstant constant, String projectPath) {
+    private static void genCodeByCustomDomainName(
+            String tableName, String domainName, String description,
+            String pk, String pkDataType, String author, String jdbcUrl,
+            String jdbcUser, String jdbcPwd, ProjectConstant constant, String projectPath) {
+
         CodeGenerator.genDomainAndMapper(tableName, domainName, pk, jdbcUrl, jdbcUser, jdbcPwd, constant, projectPath);
         CodeGenerator.genMyBatisConfig(projectPath);
         CodeGenerator.genService(tableName, domainName, description, pkDataType, author, constant, projectPath);
@@ -150,7 +158,10 @@ public class CodeGenerator {
      * @param constant    包等常量类
      * @param projectPath 项目生成地址
      */
-    private static void genDomainAndMapper(String tableName, String domainName, String pk, String jdbcUrl, String jdbcUser, String jdbcPwd, ProjectConstant constant, String projectPath) {
+    private static void genDomainAndMapper(
+            String tableName, String domainName, String pk, String jdbcUrl,
+            String jdbcUser, String jdbcPwd, ProjectConstant constant, String projectPath) {
+
         Context context = new Context(ModelType.FLAT);
         context.setId("Potato");
         context.setTargetRuntime("MyBatis3Simple");
@@ -172,14 +183,14 @@ public class CodeGenerator {
 
         // 使用 tkMapper 插件,生成 mapper 接口继承 ProjectConstant.MAPPER_INTERFACE_REFERENCE 定义接口
         PluginConfiguration pluginConfiguration = new PluginConfiguration();
-        pluginConfiguration.setConfigurationType("tk.mybatis.mapper.generator.MapperPlugin");
+        pluginConfiguration.setConfigurationType("com.online4edu.dependencies.mybatis.generator.plugin.MapperPlugin");
         pluginConfiguration.addProperty("mappers", ProjectConstant.MAPPER_INTERFACE_REFERENCE);
         context.addPluginConfiguration(pluginConfiguration);
 
         // 增加 mybatis 插件
         PluginConfiguration serializablePlugin = new PluginConfiguration();
         serializablePlugin.setConfigurationType("org.mybatis.generator.plugins.SerializablePlugin");
-        serializablePlugin.addProperty("dto", vo);
+        serializablePlugin.addProperty("vo", vo);
         context.addPluginConfiguration(serializablePlugin);
 
         // Model 文件生成配置
@@ -278,7 +289,7 @@ public class CodeGenerator {
             String domainNameUpperCamel = StringUtils.isEmpty(domainName) ? tableNameConvertUpperCamel(tableName) : domainName;
             data.put("domainNameUpperCamel", domainNameUpperCamel);
             data.put("domainNameLowerCamel", tableNameConvertLowerCamel(tableName));
-            data.put("basePackage", constant.getPackAge());
+            data.put("basePackage", constant.getPkg());
             File file = new File(projectPath + JAVA_PATH + service + domainNameUpperCamel + "Service.java");
             if (!file.getParentFile().exists()) {
                 file.getParentFile().mkdirs();
@@ -320,7 +331,7 @@ public class CodeGenerator {
             data.put("baseRequestMapping", domainNameConvertMappingPath(domainNameUpperCamel));
             data.put("domainNameUpperCamel", domainNameUpperCamel);
             data.put("domainNameLowerCamel", CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, domainNameUpperCamel));
-            data.put("basePackage", constant.getPackAge());
+            data.put("basePackage", constant.getPkg());
             File file = new File(projectPath + JAVA_PATH + vo + domainNameUpperCamel + "DTO.java");
             if (!file.getParentFile().exists()) {
                 file.getParentFile().mkdirs();

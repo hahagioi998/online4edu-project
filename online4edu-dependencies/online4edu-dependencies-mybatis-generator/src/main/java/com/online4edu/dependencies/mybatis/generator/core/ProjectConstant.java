@@ -9,7 +9,7 @@ package com.online4edu.dependencies.mybatis.generator.core;
 public class ProjectConstant {
 
     private String vo;
-    private String packAge;
+    private String pkg;
     private String domain;
     private String mapper;
     private String service;
@@ -18,23 +18,23 @@ public class ProjectConstant {
     /**
      * Mapper 基础继承接口
      */
-    public static String MAPPER_INTERFACE_REFERENCE = "com.mingrn.itumate.core.Mapper";
+    public static String MAPPER_INTERFACE_REFERENCE = "com.online4edu.dependencies.mybatis.mapper.BaseMapper";
 
-    public ProjectConstant(String packAge) {
-        this.packAge = packAge;
-        this.vo = packAge + ".vo";
-        this.domain = packAge + ".domain";
-        this.mapper = packAge + ".mapper";
-        this.service = packAge + ".service";
+    public ProjectConstant(String pkg) {
+        this.pkg = pkg;
+        this.vo = pkg + ".vo";
+        this.domain = pkg + ".domain";
+        this.mapper = pkg + ".mapper";
+        this.service = pkg + ".service";
         this.serviceImpl = this.service + ".impl";
     }
 
-    public String getPackAge() {
-        return this.packAge;
+    public String getPkg() {
+        return this.pkg;
     }
 
-    public void setPackAge(String packAge) {
-        this.packAge = packAge;
+    public void setPkg(String pkg) {
+        this.pkg = pkg;
     }
 
     public String getDomain() {

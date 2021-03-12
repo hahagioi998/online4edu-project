@@ -4,8 +4,6 @@ import com.online4edu.dependencies.mybatis.generator.domain.Column;
 import com.online4edu.dependencies.mybatis.generator.domain.Table;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -46,7 +44,7 @@ public class ConnectJdbc {
     private static final String CLASS_NAME = "com.mysql.cj.jdbc.Driver";
     private static final String DEFAULT_CLASS_NAME = "com.mysql.jdbc.Driver";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ConnectJdbc.class);
+//    private static final Logger LOGGER = LoggerFactory.getLogger(ConnectJdbc.class);
 
     static {
         try {
@@ -55,7 +53,8 @@ public class ConnectJdbc {
             try {
                 Class.forName(CLASS_NAME);
             } catch (ClassNotFoundException e1) {
-                LOGGER.error("can not load jdbc driver", e);
+                System.err.println("===========can not load jdbc driver==============");
+                e.printStackTrace();
             }
         }
     }
@@ -93,7 +92,8 @@ public class ConnectJdbc {
                     + "?useUnicode=true&characterEncoding=utf-8&useSSL=" + useSSL, user, password);
 
         } catch (SQLException e) {
-            LOGGER.error("Get jdbc connection failure", e);
+            System.out.println("===========Get jdbc connection failure============");
+            e.printStackTrace();
         }
         return connection;
     }
@@ -105,7 +105,7 @@ public class ConnectJdbc {
     public List<String> showDatabases() {
 
         if (connection == null) {
-            LOGGER.error("JDBC Connection Is Null, Exit");
+            System.err.println("JDBC Connection Is Null, Exit");
             return Collections.EMPTY_LIST;
         }
 
@@ -116,7 +116,7 @@ public class ConnectJdbc {
                 databases.add(resultSet.getString("database"));
             }
         } catch (SQLException e) {
-            LOGGER.error(e.getMessage(), e);
+            e.printStackTrace();
         } finally {
             closeConnection();
         }
@@ -133,7 +133,7 @@ public class ConnectJdbc {
     public List<Table> showTables(String database) {
 
         if (connection == null) {
-            LOGGER.error("JDBC Connection Is Null, Exit");
+            System.err.println("JDBC Connection Is Null, Exit");
             return Collections.EMPTY_LIST;
         }
 
@@ -177,12 +177,14 @@ public class ConnectJdbc {
                 String tableComment = tablesComment.getString("comment");
                 Date createTime = tablesComment.getDate("create_time");
                 String createTimeStr = new DateTime(createTime).toString("yyyy-MM-dd HH:mm:ss");
-                LOGGER.info("{} - {} - {}", tableName, tableComment, createTimeStr);
+
+                System.out.println(String.format("%s - %s - %s", tableName, tableComment, createTimeStr));
+                System.out.println();
                 tables.add(new Table(tableName, tableComment, createTime));
             }
 
         } catch (SQLException e) {
-            LOGGER.error(e.getMessage(), e);
+            e.printStackTrace();
         } finally {
             closeConnection();
         }
@@ -200,7 +202,7 @@ public class ConnectJdbc {
     public List<Column> showColumns(String database, String table) {
 
         if (connection == null) {
-            LOGGER.error("JDBC Connection Is Null, Exit");
+            System.err.println("JDBC Connection Is Null, Exit");
             return Collections.EMPTY_LIST;
         }
 
@@ -211,8 +213,9 @@ public class ConnectJdbc {
         List<Column> columns = new ArrayList<>();
         try {
             // 查询数据表字段及信息
-            ResultSet columnSet = connection.prepareStatement("SELECT COLUMN_NAME name, COLUMN_TYPE type, COLUMN_KEY `key`, IS_NULLABLE isNullable, COLUMN_COMMENT `comment` "
-                    + "FROM information_schema.columns WHERE TABLE_SCHEMA='" + database + "' AND TABLE_NAME = '" + table + "';").executeQuery();
+            ResultSet columnSet = connection.prepareStatement(
+                    "SELECT COLUMN_NAME name, COLUMN_TYPE type, COLUMN_KEY `key`, IS_NULLABLE isNullable, COLUMN_COMMENT `comment` "
+                            + "FROM information_schema.columns WHERE TABLE_SCHEMA='" + database + "' AND TABLE_NAME = '" + table + "';").executeQuery();
 
             while (columnSet.next()) {
                 String name = columnSet.getString("name");
@@ -220,11 +223,11 @@ public class ConnectJdbc {
                 String key = columnSet.getString("key");
                 String isNullable = columnSet.getString("isNullable");
                 String comment = columnSet.getString("comment");
-                LOGGER.info("{} - {} - {} - {} - {}", name, type, key, isNullable, comment);
+                System.out.println(String.format("%s - %s - %s - %s - %s", name, type, key, isNullable, comment));
                 columns.add(new Column(name, type, key, isNullable, comment));
             }
         } catch (SQLException e) {
-            LOGGER.error(e.getMessage(), e);
+            e.printStackTrace();
         } finally {
             closeConnection();
         }
@@ -239,7 +242,8 @@ public class ConnectJdbc {
             try {
                 connection.close();
             } catch (SQLException e) {
-                LOGGER.error("close jdbc connection failure", e);
+                System.err.println("============close jdbc connection failure==============");
+                e.printStackTrace();
             }
         }
     }
