@@ -35,15 +35,15 @@ import java.util.stream.Collectors;
  * @date 2021/03/06 00:18
  */
 @Slf4j
-public abstract class BaseServiceImpl<T, V extends T>
+public abstract class BaseServiceImpl<T, V extends T, M extends BaseMapper<T, V>>
         implements BaseService<T, V> {
+
+    private M baseMapper;
 
     private Class<T> currentModelClass;
 
-    private BaseMapper<T, V> baseMapper;
-
     @Autowired
-    public void setBaseMapper(BaseMapper<T, V> baseMapper) {
+    public void setBaseMapper(M baseMapper) {
         this.baseMapper = baseMapper;
     }
 
