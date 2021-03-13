@@ -37,4 +37,16 @@ public class JdbcProperties {
         this.jdbcUser = jdbcUser;
         this.jdbcPwd = jdbcPwd;
     }
+
+    public String getJdbcUrl() {
+        char segmentation = '&';
+        if (!jdbcUrl.contains("?")) {
+            segmentation = '?';
+        }
+        if (!jdbcUrl.contains("tinyInt1isBit")) {
+            jdbcUrl += segmentation + "tinyInt1isBit=false";
+        }
+
+        return jdbcUrl;
+    }
 }
