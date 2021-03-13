@@ -2,6 +2,7 @@ package com.online4edu.dependencies.mybatis.generator.core;
 
 import com.google.common.base.CaseFormat;
 import com.online4edu.dependencies.mybatis.generator.config.SimpleJavaTypeResolverImpl;
+import com.online4edu.dependencies.mybatis.generator.plugin.MapperPluginAdapter;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 import org.apache.commons.lang3.StringUtils;
@@ -48,35 +49,25 @@ public class CodeGenerator {
      * 获取 DTO、Service、Impl 文件包路径
      *
      * @param tableNameArr 数据表二维数组
-     * @param author       作者
-     * @param jdbcUrl      JDBC 数据库地址
-     * @param jdbcUser     数据库用户名
-     * @param jdbcPwd      数据库密码
-     * @param constant     包等常量类
      * @param projectPath  项目生成地址
      */
-    public CodeGenerator(String[][] tableNameArr, String author, String jdbcUrl,
-                         String jdbcUser, String jdbcPwd, ProjectConstant constant, String projectPath) {
+    public CodeGenerator(String[][] tableNameArr, String projectPath) {
 
-        vo = packageConvertPath(constant.getVo());
-        service = packageConvertPath(constant.getService());
-        serviceImpl = packageConvertPath(constant.getServiceImpl());
-        genCode(tableNameArr, author, jdbcUrl, jdbcUser, jdbcPwd, constant, projectPath);
+        ProjectProperties instance = ProjectProperties.getInstance();
+        vo = packageConvertPath(instance.getVo());
+        service = packageConvertPath(instance.getService());
+        serviceImpl = packageConvertPath(instance.getServiceImpl());
+
+        genCode(tableNameArr, projectPath);
     }
 
     /**
      * 获取数据表名
      *
      * @param tableNameArr 数据表二维数组
-     * @param author       作者
-     * @param jdbcUrl      JDBC 数据库地址
-     * @param jdbcUser     数据库用户名
-     * @param jdbcPwd      数据库密码
-     * @param constant     包等常量类
      * @param projectPath  项目生成地址
      */
-    private static void genCode(String[][] tableNameArr, String author, String jdbcUrl,
-                                String jdbcUser, String jdbcPwd, ProjectConstant constant, String projectPath) {
+    private static void genCode(String[][] tableNameArr, String projectPath) {
 
         File javaDir = new File(projectPath + "/src/main/java");
         if (!javaDir.exists()) {
@@ -113,7 +104,7 @@ public class CodeGenerator {
                 }
             }
 
-            CodeGenerator.genCodeByCustomDomainName(tableName, domainName, description, pk, pkDataType, author, jdbcUrl, jdbcUser, jdbcPwd, constant, projectPath);
+            CodeGenerator.genCodeByCustomDomainName(tableName, domainName, description, pk, pkDataType, projectPath);
         }
 
     }
@@ -126,23 +117,18 @@ public class CodeGenerator {
      * @param description 描述
      * @param pk          主键
      * @param pkDataType  主键类型
-     * @param author      作者
-     * @param jdbcUrl     JDBC 数据库地址
-     * @param jdbcUser    数据库用户名
-     * @param jdbcPwd     数据库密码
-     * @param constant    包等常量类
      * @param projectPath 项目生成地址
      */
     private static void genCodeByCustomDomainName(
             String tableName, String domainName, String description,
-            String pk, String pkDataType, String author, String jdbcUrl,
-            String jdbcUser, String jdbcPwd, ProjectConstant constant, String projectPath) {
+            String pk, String pkDataType, String projectPath) {
 
-        CodeGenerator.genDomainAndMapper(tableName, domainName, pk, jdbcUrl, jdbcUser, jdbcPwd, constant, projectPath);
-        CodeGenerator.genMyBatisConfig(projectPath);
-        CodeGenerator.genService(tableName, domainName, description, pkDataType, author, constant, projectPath);
-        CodeGenerator.genDTO(tableName, domainName, description, author, constant, projectPath);
-        String newName = projectPath.substring(projectPath.indexOf("\\") + 1);
+
+        CodeGenerator.genDomainAndMapper(tableName, domainName, pk, projectPath);
+//        CodeGenerator.genMyBatisConfig(projectPath);
+        CodeGenerator.genService(tableName, domainName, description, pkDataType, projectPath);
+        CodeGenerator.genVO(tableName, domainName, description, projectPath);
+//        String newName = projectPath.substring(projectPath.indexOf("\\") + 1);
 //		CodeGenerator.genPom(newName, projectPath);
     }
 
@@ -152,15 +138,10 @@ public class CodeGenerator {
      * @param tableName   表名
      * @param domainName  实体类名
      * @param pk          实体类主键
-     * @param jdbcUrl     JDBC 数据库地址
-     * @param jdbcUser    数据库用户名
-     * @param jdbcPwd     数据库密码
-     * @param constant    包等常量类
      * @param projectPath 项目生成地址
      */
     private static void genDomainAndMapper(
-            String tableName, String domainName, String pk, String jdbcUrl,
-            String jdbcUser, String jdbcPwd, ProjectConstant constant, String projectPath) {
+            String tableName, String domainName, String pk, String projectPath) {
 
         Context context = new Context(ModelType.FLAT);
         context.setId("Potato");
@@ -175,28 +156,28 @@ public class CodeGenerator {
 
         // JDBC 连接配置
         JDBCConnectionConfiguration jdbcConnectionConfiguration = new JDBCConnectionConfiguration();
-        jdbcConnectionConfiguration.setConnectionURL(jdbcUrl);
-        jdbcConnectionConfiguration.setUserId(jdbcUser);
-        jdbcConnectionConfiguration.setPassword(jdbcPwd);
+        jdbcConnectionConfiguration.setConnectionURL(JdbcProperties.getInstance().getJdbcUrl());
+        jdbcConnectionConfiguration.setUserId(JdbcProperties.getInstance().getJdbcUser());
+        jdbcConnectionConfiguration.setPassword(JdbcProperties.getInstance().getJdbcPwd());
         jdbcConnectionConfiguration.setDriverClass(JDBC_DIVER_CLASS_NAME);
         context.setJdbcConnectionConfiguration(jdbcConnectionConfiguration);
 
         // 使用 tkMapper 插件,生成 mapper 接口继承 ProjectConstant.MAPPER_INTERFACE_REFERENCE 定义接口
         PluginConfiguration pluginConfiguration = new PluginConfiguration();
-        pluginConfiguration.setConfigurationType("com.online4edu.dependencies.mybatis.generator.plugin.MapperPlugin");
-        pluginConfiguration.addProperty("mappers", ProjectConstant.MAPPER_INTERFACE_REFERENCE);
+        pluginConfiguration.setConfigurationType(MapperPluginAdapter.class.getName());
+        pluginConfiguration.addProperty("mappers", ProjectProperties.BASE_MAPPER_INTERFACE);
         context.addPluginConfiguration(pluginConfiguration);
 
         // 增加 mybatis 插件
         PluginConfiguration serializablePlugin = new PluginConfiguration();
         serializablePlugin.setConfigurationType("org.mybatis.generator.plugins.SerializablePlugin");
-        serializablePlugin.addProperty("vo", vo);
+//        serializablePlugin.addProperty("vo", vo);
         context.addPluginConfiguration(serializablePlugin);
 
         // Model 文件生成配置
         JavaModelGeneratorConfiguration javaModelGeneratorConfiguration = new JavaModelGeneratorConfiguration();
         javaModelGeneratorConfiguration.setTargetProject(projectPath + JAVA_PATH);
-        javaModelGeneratorConfiguration.setTargetPackage(constant.getDomain());
+        javaModelGeneratorConfiguration.setTargetPackage(ProjectProperties.getInstance().getDomain());
         context.setJavaModelGeneratorConfiguration(javaModelGeneratorConfiguration);
 
         // Mapper 文件生成配置
@@ -207,7 +188,7 @@ public class CodeGenerator {
 
         JavaClientGeneratorConfiguration javaClientGeneratorConfiguration = new JavaClientGeneratorConfiguration();
         javaClientGeneratorConfiguration.setTargetProject(projectPath + JAVA_PATH);
-        javaClientGeneratorConfiguration.setTargetPackage(constant.getMapper());
+        javaClientGeneratorConfiguration.setTargetPackage(ProjectProperties.getInstance().getMapper());
         javaClientGeneratorConfiguration.setConfigurationType("XMLMAPPER");
         context.setJavaClientGeneratorConfiguration(javaClientGeneratorConfiguration);
 
@@ -251,13 +232,12 @@ public class CodeGenerator {
 
     private static void genMyBatisConfig(String projectPath) {
         try {
-            freemarker.template.Configuration cfg = getConfiguration();
             Map<String, Object> data = new HashMap<String, Object>(16);
             File file = new File(projectPath + RESOURCES_PATH + "/mybatis/mybatis-config.xml");
             if (!file.getParentFile().exists()) {
                 file.getParentFile().mkdirs();
             }
-            cfg.getTemplate("mybatis-config.ftl").process(data, new FileWriter(file));
+            getConfiguration().getTemplate("mybatis-config.ftl").process(data, new FileWriter(file));
             System.out.println("mybatis-config.xml 生成成功");
         } catch (IOException | TemplateException e) {
             throw new RuntimeException("mybatis-config.xml 生成失败", e);
@@ -273,36 +253,33 @@ public class CodeGenerator {
      * @param domainName  实体类
      * @param description 描述
      * @param pkDataType  主键类型
-     * @param author      作者
-     * @param constant    包等常量类
      * @param projectPath 项目生成地址
      */
-    private static void genService(String tableName, String domainName, String description, String pkDataType, String author, ProjectConstant constant, String projectPath) {
+    private static void genService(String tableName, String domainName, String description, String pkDataType, String projectPath) {
         try {
-            freemarker.template.Configuration cfg = getConfiguration();
             Map<String, Object> data = new HashMap<String, Object>(16);
             String desc = StringUtils.isEmpty(description) ? "" : description;
             data.put("description", desc);
             data.put("date", DATE);
-            data.put("author", author);
+            data.put("author", JdbcProperties.getInstance().getAuthor());
             data.put("pkDataType", pkDataType);
             String domainNameUpperCamel = StringUtils.isEmpty(domainName) ? tableNameConvertUpperCamel(tableName) : domainName;
             data.put("domainNameUpperCamel", domainNameUpperCamel);
             data.put("domainNameLowerCamel", tableNameConvertLowerCamel(tableName));
-            data.put("basePackage", constant.getPkg());
+            data.put("basePackage", ProjectProperties.getInstance().getProjectPackage());
             File file = new File(projectPath + JAVA_PATH + service + domainNameUpperCamel + "Service.java");
             if (!file.getParentFile().exists()) {
                 file.getParentFile().mkdirs();
             }
 
-            cfg.getTemplate("service.ftl").process(data, new FileWriter(file));
+            getConfiguration().getTemplate("service.ftl").process(data, new FileWriter(file));
             System.out.println(domainNameUpperCamel + "Service.java 生成成功");
             File file1 = new File(projectPath + JAVA_PATH + serviceImpl + domainNameUpperCamel + "ServiceImpl.java");
             if (!file1.getParentFile().exists()) {
                 file1.getParentFile().mkdirs();
             }
 
-            cfg.getTemplate("service-impl.ftl").process(data, new FileWriter(file1));
+            getConfiguration().getTemplate("service-impl.ftl").process(data, new FileWriter(file1));
             System.out.println(domainNameUpperCamel + "ServiceImpl.java 生成成功");
         } catch (Exception var14) {
             throw new RuntimeException("生成Service失败", var14);
@@ -315,29 +292,26 @@ public class CodeGenerator {
      * @param tableName   表名
      * @param domainName  实体类
      * @param description 描述
-     * @param author      作者
-     * @param constant    包等常量类
      * @param projectPath 项目生成地址
      */
-    private static void genDTO(String tableName, String domainName, String description, String author, ProjectConstant constant, String projectPath) {
+    private static void genVO(String tableName, String domainName, String description, String projectPath) {
         try {
-            freemarker.template.Configuration cfg = getConfiguration();
             Map<String, Object> data = new HashMap<String, Object>(16);
             String desc = StringUtils.isEmpty(description) ? "" : description;
             data.put("description", desc);
             data.put("date", DATE);
-            data.put("author", author);
+            data.put("author", JdbcProperties.getInstance().getAuthor());
             String domainNameUpperCamel = StringUtils.isEmpty(domainName) ? tableNameConvertUpperCamel(tableName) : domainName;
             data.put("baseRequestMapping", domainNameConvertMappingPath(domainNameUpperCamel));
             data.put("domainNameUpperCamel", domainNameUpperCamel);
             data.put("domainNameLowerCamel", CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, domainNameUpperCamel));
-            data.put("basePackage", constant.getPkg());
-            File file = new File(projectPath + JAVA_PATH + vo + domainNameUpperCamel + "DTO.java");
+            data.put("basePackage", ProjectProperties.getInstance().getProjectPackage());
+            File file = new File(projectPath + JAVA_PATH + vo + domainNameUpperCamel + "VO.java");
             if (!file.getParentFile().exists()) {
                 file.getParentFile().mkdirs();
             }
 
-            cfg.getTemplate("dto.ftl").process(data, new FileWriter(file));
+            getConfiguration().getTemplate("vo.ftl").process(data, new FileWriter(file));
             System.out.println(domainNameUpperCamel + "DTO.java 生成成功");
         } catch (Exception var12) {
             throw new RuntimeException("生成DTO失败", var12);
@@ -349,7 +323,6 @@ public class CodeGenerator {
      */
     private static void genPom(String projectName, String projectPath) {
         try {
-            freemarker.template.Configuration cfg = getConfiguration();
             Map<String, Object> data = new HashMap<String, Object>(3);
             data.put("projectName", projectName);
             data.put("artifactId", "${project.artifactId}");
@@ -359,7 +332,7 @@ public class CodeGenerator {
                 file.getParentFile().mkdirs();
             }
 
-            cfg.getTemplate("pom.ftl").process(data, new FileWriter(file));
+            getConfiguration().getTemplate("pom.ftl").process(data, new FileWriter(file));
             System.out.println("pom.xml 生成成功");
         } catch (Exception var6) {
             throw new RuntimeException("生成pom.xml失败", var6);

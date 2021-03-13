@@ -2,7 +2,8 @@ package com.online4edu.dependencies.mybatis.generator.util;
 
 
 import com.online4edu.dependencies.mybatis.generator.core.CodeGenerator;
-import com.online4edu.dependencies.mybatis.generator.core.ProjectConstant;
+import com.online4edu.dependencies.mybatis.generator.core.JdbcProperties;
+import com.online4edu.dependencies.mybatis.generator.core.ProjectProperties;
 
 import java.io.File;
 
@@ -36,15 +37,13 @@ public class CodeUtil {
             file.mkdirs();
         }
 
-        ProjectConstant constant = projectPath(projectPackage);
-        new CodeGenerator(tableNameArr, author, jdbcUrl, jdbcUser, jdbcPwd, constant, projectPath);
-    }
+        // 初始化基本信息
+        ProjectProperties projectProperties = ProjectProperties.getInstance();
+        projectProperties.init(projectPackage);
 
+        JdbcProperties jdbcProperties = JdbcProperties.getInstance();
+        jdbcProperties.init(author, jdbcUrl, jdbcUser, jdbcPwd);
 
-    /**
-     * @param projectPackage 项目基础包
-     */
-    private static ProjectConstant projectPath(String projectPackage) {
-        return new ProjectConstant(projectPackage);
+        new CodeGenerator(tableNameArr, projectPath);
     }
 }

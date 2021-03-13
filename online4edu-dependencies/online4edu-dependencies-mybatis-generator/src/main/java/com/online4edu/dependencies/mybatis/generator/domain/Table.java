@@ -1,14 +1,24 @@
 package com.online4edu.dependencies.mybatis.generator.domain;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 import java.io.Serializable;
 import java.util.Date;
+
 
 /**
  * 数据表信息
  *
- * @author MinGRn <br > MinGRn97@gmail.com
- * @date 2019-07-03 20:59
+ * @author Shilin <br > mingrn97@gmail.com
+ * @date 2021/03/13 11:50
  */
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode
 public class Table implements Serializable {
 
     private static final long serialVersionUID = -7497224466254008135L;
@@ -28,30 +38,6 @@ public class Table implements Serializable {
     public Table(String name, String comment, Date createDate) {
         this.name = name;
         this.comment = comment;
-        this.createDate = createDate;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
-    public Date getCreateDate() {
-        return createDate;
-    }
-
-    public void setCreateDate(Date createDate) {
         this.createDate = createDate;
     }
 }

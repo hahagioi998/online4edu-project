@@ -1,5 +1,6 @@
 package com.online4edu.dependencies.mybatis.generator.plugin;
 
+import org.apache.commons.lang3.StringUtils;
 import org.mybatis.generator.api.CommentGenerator;
 import org.mybatis.generator.api.IntrospectedColumn;
 import org.mybatis.generator.api.IntrospectedTable;
@@ -9,11 +10,10 @@ import org.mybatis.generator.api.dom.xml.XmlElement;
 import org.mybatis.generator.config.MergeConstants;
 import org.mybatis.generator.internal.util.StringUtility;
 
-import java.text.MessageFormat;
 import java.util.Properties;
 
 /**
- * 注释生成
+ * Mapper 注释生成
  *
  * @author Shilin <br > mingrn97@gmail.com
  * @date 2021/03/12 10:21
@@ -21,12 +21,12 @@ import java.util.Properties;
 public class MapperCommentGenerator implements CommentGenerator {
 
     /**
-     * 开始的分隔符,例如mysql为`,sqlserver为[
+     * 开始的分隔符,例如mysql为`,sqlServer为[
      */
     private String beginningDelimiter = "";
 
     /**
-     * 结束的分隔符,例如mysql为`,sqlserver为]
+     * 结束的分隔符,例如mysql为`,sqlServer为]
      */
     private String endingDelimiter = "";
 
@@ -40,8 +40,6 @@ public class MapperCommentGenerator implements CommentGenerator {
 
     /**
      * xml中的注释
-     *
-     * @param xmlElement
      */
     @Override
     public void addComment(XmlElement xmlElement) {
@@ -53,7 +51,6 @@ public class MapperCommentGenerator implements CommentGenerator {
 
     @Override
     public void addRootComment(XmlElement rootElement) {
-        return;
     }
 
     @Override
@@ -72,25 +69,6 @@ public class MapperCommentGenerator implements CommentGenerator {
         return beginningDelimiter + name + endingDelimiter;
     }
 
-    /**
-     * 删除标记
-     */
-    protected void addJavadocTag(JavaElement javaElement, boolean markAsDoNotDelete) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(" * ");
-        sb.append(MergeConstants.NEW_ELEMENT_TAG);
-        if (markAsDoNotDelete) {
-            sb.append(" do_not_delete_during_merge");
-        }
-        javaElement.addJavaDocLine(sb.toString());
-    }
-
-    /**
-     * Example使用
-     *
-     * @param innerClass
-     * @param introspectedTable
-     */
     @Override
     public void addClassComment(InnerClass innerClass, IntrospectedTable introspectedTable) {
     }
@@ -100,73 +78,63 @@ public class MapperCommentGenerator implements CommentGenerator {
     }
 
     /**
-     * 给字段添加数据库备注
-     *
-     * @param field
-     * @param introspectedTable
-     * @param introspectedColumn
+     * 给字段添加数据库注释、注解
      */
     @Override
     public void addFieldComment(Field field, IntrospectedTable introspectedTable, IntrospectedColumn introspectedColumn) {
 
-//        if (StringUtility.stringHasValue(introspectedColumn.getRemarks())) {
-//            field.addJavaDocLine("/**");
-//            StringBuilder sb = new StringBuilder();
-//            sb.append(" * ");
-//            sb.append(introspectedColumn.getRemarks());
-//            field.addJavaDocLine(sb.toString());
-//            field.addJavaDocLine(" */");
-//        }
-
-        // 添加注解
+        // 添加 @Transient 注解
         if (field.isTransient()) {
             field.addAnnotation("@Transient");
         }
-        /*for (IntrospectedColumn column : introspectedTable.getPrimaryKeyColumns()) {
-            if (introspectedColumn == column) {
-                field.addAnnotation("@Id");
-                break;
-            }
-        }*/
-        String column = introspectedColumn.getActualColumnName();
-        if (StringUtility.stringContainsSpace(column) || introspectedTable.getTableConfiguration().isAllColumnDelimitingEnabled()) {
-            column = introspectedColumn.getContext().getBeginningDelimiter()
-                    + column
-                    + introspectedColumn.getContext().getEndingDelimiter();
-        }
 
-
+        // 添加 @ApiModelProperty 注解
         field.addAnnotation("@ApiModelProperty(\"" + introspectedColumn.getRemarks() + "\")");
 
-//        if (!column.equals(introspectedColumn.getJavaProperty())) {
-//            //@Column
-//            field.addAnnotation("@Column(name = \"" + getDelimiterName(column) + "\")");
-//        } else if (StringUtility.stringHasValue(beginningDelimiter) || StringUtility.stringHasValue(endingDelimiter)) {
-//            field.addAnnotation("@Column(name = \"" + getDelimiterName(column) + "\")");
-//        }
-
+        // 主键
         if (introspectedColumn.isIdentity()) {
             field.addAnnotation("@TableId(type = IdType.AUTO)");
-            /*if (introspectedTable.getTableConfiguration().getGeneratedKey().getRuntimeSqlStatement().equals("JDBC")) {
-                field.addAnnotation("@GeneratedValue(generator = \"JDBC\")");
-            } else {
-                field.addAnnotation("@GeneratedValue(strategy = GenerationType.IDENTITY)");
-            }*/
-        } else if (introspectedColumn.isSequenceColumn()) {
+        } /*else if (introspectedColumn.isSequenceColumn()) {
             // 在 Oracle 中,如果需要是 SEQ_TABLENAME, 那么可以配置为 select SEQ_{1} from dual
-            /*String tableName = introspectedTable.getFullyQualifiedTableNameAtRuntime();
-            String sql = MessageFormat.format(introspectedTable.getTableConfiguration().getGeneratedKey().getRuntimeSqlStatement(), tableName, tableName.toUpperCase());
-            field.addAnnotation("@GeneratedValue(strategy = GenerationType.IDENTITY, generator = \"" + sql + "\")");*/
-        }
+        }*/
     }
 
     @Override
     public void addFieldComment(Field field, IntrospectedTable introspectedTable) {
+        // 字段需要增加注释? 使用 Swagger 直接使用 @ApiModelProperty 注解即可
     }
 
     @Override
     public void addModelClassComment(TopLevelClass topLevelClass, IntrospectedTable introspectedTable) {
+        // 在类上导入包
+        topLevelClass.addImportedType("com.baomidou.mybatisplus.annotation.*");
+        topLevelClass.addImportedType("io.swagger.annotations.ApiModel");
+        topLevelClass.addImportedType("io.swagger.annotations.ApiModelProperty");
+        topLevelClass.addImportedType("lombok.*");
 
+        // 增加注解
+        topLevelClass.addAnnotation("@Getter");
+        topLevelClass.addAnnotation("@Setter");
+        topLevelClass.addAnnotation("@ToString");
+        topLevelClass.addAnnotation("@NoArgsConstructor");
+        topLevelClass.addAnnotation("@EqualsAndHashCode(callSuper = false)");
+
+        String tableName = introspectedTable.getFullyQualifiedTableNameAtRuntime();
+        //如果包含空格,或者需要分隔符,需要完善
+        if (StringUtility.stringContainsSpace(tableName)) {
+            tableName = beginningDelimiter + tableName + endingDelimiter;
+        }
+
+        topLevelClass.addAnnotation("@TableName(\"" + tableName.toLowerCase() + "\")");
+
+        String remarks = introspectedTable.getRemarks();
+        if (StringUtils.isNotBlank(remarks)) {
+            topLevelClass.addAnnotation("@ApiModel(\"" + remarks.trim() + "\")");
+        }
+
+        // 实体类继承 Convert
+        topLevelClass.addImportedType(new FullyQualifiedJavaType("com.online4edu.dependencies.utils.converter.Convert"));
+        topLevelClass.setSuperClass(new FullyQualifiedJavaType("Convert"));
     }
 
     @Override
@@ -178,23 +146,7 @@ public class MapperCommentGenerator implements CommentGenerator {
      */
     @Override
     public void addGetterComment(Method method, IntrospectedTable introspectedTable, IntrospectedColumn introspectedColumn) {
-//        StringBuilder sb = new StringBuilder();
-//        method.addJavaDocLine("/**");
-//        if (StringUtility.stringHasValue(introspectedColumn.getRemarks())) {
-//            sb.append(" * 获取");
-//            sb.append(introspectedColumn.getRemarks());
-//            method.addJavaDocLine(sb.toString());
-//            method.addJavaDocLine(" *");
-//        }
-//        sb.setLength(0);
-//        sb.append(" * @return ");
-//        sb.append(introspectedColumn.getActualColumnName());
-//        if (StringUtility.stringHasValue(introspectedColumn.getRemarks())) {
-//            sb.append(" - ");
-//            sb.append(introspectedColumn.getRemarks());
-//        }
-//        method.addJavaDocLine(sb.toString());
-//        method.addJavaDocLine(" */");
+        // 使用 lombok 后直接使用 @Getter 注解即可
     }
 
     /**
@@ -202,24 +154,7 @@ public class MapperCommentGenerator implements CommentGenerator {
      */
     @Override
     public void addSetterComment(Method method, IntrospectedTable introspectedTable, IntrospectedColumn introspectedColumn) {
-//        StringBuilder sb = new StringBuilder();
-//        method.addJavaDocLine("/**");
-//        if (StringUtility.stringHasValue(introspectedColumn.getRemarks())) {
-//            sb.append(" * 设置");
-//            sb.append(introspectedColumn.getRemarks());
-//            method.addJavaDocLine(sb.toString());
-//            method.addJavaDocLine(" *");
-//        }
-//        Parameter parm = method.getParameters().get(0);
-//        sb.setLength(0);
-//        sb.append(" * @param ");
-//        sb.append(parm.getName());
-//        if (StringUtility.stringHasValue(introspectedColumn.getRemarks())) {
-//            sb.append(" ");
-//            sb.append(introspectedColumn.getRemarks());
-//        }
-//        method.addJavaDocLine(sb.toString());
-//        method.addJavaDocLine(" */");
+        // 使用 lombok 后直接使用 @Setter 注解即可
     }
 
 

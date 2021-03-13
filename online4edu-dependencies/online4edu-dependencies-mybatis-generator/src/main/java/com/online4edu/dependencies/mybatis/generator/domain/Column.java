@@ -1,13 +1,23 @@
 package com.online4edu.dependencies.mybatis.generator.domain;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 import java.io.Serializable;
+
 
 /**
  * 数据表字段信息
  *
- * @author MinGRn <br > MinGRn97@gmail.com
- * @date 2019-07-03 21:55
+ * @author Shilin <br > mingrn97@gmail.com
+ * @date 2021/03/13 11:50
  */
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode
 public class Column implements Serializable {
 
     private static final long serialVersionUID = 6532448600416890162L;
@@ -37,44 +47,4 @@ public class Column implements Serializable {
 
     /** 字段描述 */
     private String comment;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getKey() {
-        return key;
-    }
-
-    public void setKey(String key) {
-        this.key = key;
-    }
-
-    public String getIsNullable() {
-        return isNullable;
-    }
-
-    public void setIsNullable(String isNullable) {
-        this.isNullable = isNullable;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
 }

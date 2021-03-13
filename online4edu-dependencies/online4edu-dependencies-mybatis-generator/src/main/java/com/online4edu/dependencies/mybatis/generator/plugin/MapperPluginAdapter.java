@@ -1,6 +1,6 @@
 package com.online4edu.dependencies.mybatis.generator.plugin;
 
-import org.apache.commons.lang3.StringUtils;
+import com.online4edu.dependencies.mybatis.generator.core.ProjectProperties;
 import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.PluginAdapter;
 import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
@@ -15,16 +15,16 @@ import org.mybatis.generator.internal.util.StringUtility;
 import java.util.*;
 
 /**
- * 生成 mapper 增强插件
+ * Mapper 增强插件
  *
  * @author Shilin <br > mingrn97@gmail.com
  * @date 2021/03/12 10:22
  */
-public class MapperPlugin extends PluginAdapter {
+public class MapperPluginAdapter extends PluginAdapter {
+
+    private boolean caseSensitive;
 
     private final Set<String> mappers = new HashSet<String>();
-
-    private boolean caseSensitive = false;
 
     /**
      * 开始的分隔符,例如mysql为`,sqlServer为[
@@ -68,7 +68,7 @@ public class MapperPlugin extends PluginAdapter {
         }
         String caseSensitive = this.properties.getProperty("caseSensitive");
         if (StringUtility.stringHasValue(caseSensitive)) {
-            this.caseSensitive = caseSensitive.equalsIgnoreCase("TRUE");
+            this.caseSensitive = "TRUE".equalsIgnoreCase(caseSensitive);
         }
         String beginningDelimiter = this.properties.getProperty("beginningDelimiter");
         if (StringUtility.stringHasValue(beginningDelimiter)) {
@@ -105,88 +105,39 @@ public class MapperPlugin extends PluginAdapter {
 
     /**
      * 生成的Mapper接口
-     *
-     * @param interfaze
-     * @param topLevelClass
-     * @param introspectedTable
-     * @return
      */
     @Override
-    public boolean clientGenerated(Interface interfaze, TopLevelClass topLevelClass, IntrospectedTable introspectedTable) {
+    public boolean clientGenerated(Interface entityInterface, TopLevelClass topLevelClass, IntrospectedTable introspectedTable) {
+
         //获取实体类
         FullyQualifiedJavaType entityType = new FullyQualifiedJavaType(introspectedTable.getBaseRecordType());
+        entityInterface.addImportedType(entityType);
+
         //import接口
-        for (String mapper : mappers) {
-            interfaze.addImportedType(new FullyQualifiedJavaType(mapper));
-            interfaze.addSuperInterface(new FullyQualifiedJavaType(mapper + "<" + entityType.getShortName() + ">"));
+        for (String mapperRefer : mappers) {
+            if (ProjectProperties.BASE_MAPPER_INTERFACE.equals(mapperRefer)) {
+
+                String entityClassShortName = entityType.getShortName();
+                String voClassShortName = entityClassShortName + "VO";
+                String voImportRefer = ProjectProperties.getInstance().getVo() + "." + voClassShortName;
+
+                entityInterface.addImportedType(new FullyQualifiedJavaType(mapperRefer));
+                entityInterface.addImportedType(new FullyQualifiedJavaType(voImportRefer));
+                entityInterface.addSuperInterface(new FullyQualifiedJavaType(
+                        mapperRefer + "<" + entityClassShortName + ", " + voClassShortName + ">"));
+            }
         }
-        //import实体类
-        interfaze.addImportedType(entityType);
         return true;
     }
 
-    /**
-     * 处理实体类的包和@Table注解
-     */
-    private void processEntityClass(TopLevelClass topLevelClass, IntrospectedTable introspectedTable) {
-
-        // 在类上导入包
-        topLevelClass.addImportedType("com.baomidou.mybatisplus.annotation.*");
-        topLevelClass.addImportedType("io.swagger.annotations.ApiModel");
-        topLevelClass.addImportedType("io.swagger.annotations.ApiModelProperty");
-        topLevelClass.addImportedType("lombok.*");
-
-        // 增加注解
-        topLevelClass.addAnnotation("@Getter");
-        topLevelClass.addAnnotation("@Setter");
-        topLevelClass.addAnnotation("@ToString");
-        topLevelClass.addAnnotation("@NoArgsConstructor");
-        topLevelClass.addAnnotation("@EqualsAndHashCode(callSuper = false)");
-
-
-        String tableName = introspectedTable.getFullyQualifiedTableNameAtRuntime();
-        //如果包含空格,或者需要分隔符,需要完善
-        if (StringUtility.stringContainsSpace(tableName)) {
-            tableName = context.getBeginningDelimiter()
-                    + tableName
-                    + context.getEndingDelimiter();
-        }
-
-        topLevelClass.addAnnotation("@TableName(\"" + tableName.toLowerCase() + "\")");
-
-        //是否忽略大小写,对于区分大小写的数据库,会有用
-        /*if (caseSensitive && !topLevelClass.getType().getShortName().equals(tableName)) {
-            topLevelClass.addAnnotation("@Table(name = \"" + getDelimiterName(tableName) + "\")");
-        } else if (!topLevelClass.getType().getShortName().equalsIgnoreCase(tableName)) {
-            topLevelClass.addAnnotation("@Table(name = \"" + getDelimiterName(tableName) + "\")");
-        } else if (StringUtility.stringHasValue(schema)
-                || StringUtility.stringHasValue(beginningDelimiter)
-                || StringUtility.stringHasValue(endingDelimiter)) {
-            topLevelClass.addAnnotation("@Table(name = \"" + getDelimiterName(tableName) + "\")");
-        }*/
-
-        String remarks = introspectedTable.getRemarks();
-        if (StringUtils.isNotBlank(remarks)) {
-            topLevelClass.addAnnotation("@ApiModel(\"" + remarks.trim() + "\")");
-        }
-
-        topLevelClass.addImportedType(new FullyQualifiedJavaType("com.online4edu.dependencies.utils.converter.Convert"));
-        topLevelClass.setSuperClass(new FullyQualifiedJavaType("Convert"));
-    }
 
     /**
      * 生成基础实体类
-     *
-     * @param topLevelClass
-     * @param introspectedTable
-     * @return
      */
     @Override
     public boolean modelBaseRecordClassGenerated(TopLevelClass topLevelClass, IntrospectedTable introspectedTable) {
-        processEntityClass(topLevelClass, introspectedTable);
 
-        // 一处内省方法
-        // 去除 getter/setter
+        // 使用 Lombok 之后就不需要除内省方法, 所以直接去除 getter/setter
         List<Method> methods = topLevelClass.getMethods();
         Iterator<Method> iterator = methods.iterator();
         while (iterator.hasNext()) {
@@ -209,20 +160,14 @@ public class MapperPlugin extends PluginAdapter {
      */
     @Override
     public boolean modelPrimaryKeyClassGenerated(TopLevelClass topLevelClass, IntrospectedTable introspectedTable) {
-        processEntityClass(topLevelClass, introspectedTable);
         return true;
     }
 
     /**
      * 生成带BLOB字段的对象
-     *
-     * @param topLevelClass
-     * @param introspectedTable
-     * @return
      */
     @Override
     public boolean modelRecordWithBLOBsClassGenerated(TopLevelClass topLevelClass, IntrospectedTable introspectedTable) {
-        processEntityClass(topLevelClass, introspectedTable);
         return false;
     }
 
