@@ -42,6 +42,19 @@
             <groupId>com.online4edu</groupId>
             <artifactId>online4edu-dependencies-utils</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.online4edu</groupId>
+            <artifactId>online4edu-dependencies-mybatis-generator</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.online4edu</groupId>
+            <artifactId>online4edu-dependencies-mybatis</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

@@ -1,7 +1,6 @@
 package ${basePackage}.vo;
 
 import ${basePackage}.domain.${domainNameUpperCamel};
-import java.io.Serializable;
 
 /**
  * ${description}-VO 扩展对象

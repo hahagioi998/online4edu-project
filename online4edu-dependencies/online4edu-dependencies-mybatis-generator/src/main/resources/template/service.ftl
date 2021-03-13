@@ -1,7 +1,7 @@
 package ${basePackage}.service;
 
 import ${basePackage}.domain.${domainNameUpperCamel};
-import ${basePackage}.dto.${domainNameUpperCamel}VO;
+import ${basePackage}.vo.${domainNameUpperCamel}VO;
 import com.online4edu.dependencies.mybatis.service.BaseService;
 import java.lang.${pkDataType};
 
@@ -11,6 +11,7 @@ import java.lang.${pkDataType};
  * @author ${author}
  * @date ${date}
  */
-public interface ${domainNameUpperCamel}Service extends BaseService<${domainNameUpperCamel}, ${domainNameUpperCamel}VO, ${pkDataType}> {
+public interface ${domainNameUpperCamel}Service
+        extends BaseService<${domainNameUpperCamel}, ${domainNameUpperCamel}VO> {
 
 }
