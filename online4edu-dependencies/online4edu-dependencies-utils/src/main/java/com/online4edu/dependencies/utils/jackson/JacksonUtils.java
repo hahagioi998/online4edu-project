@@ -1,4 +1,4 @@
-package com.online4edu.dependencies.utils.converter;
+package com.online4edu.dependencies.utils.jackson;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
-import java.util.Objects;
 
 /**
  * Json utils implement by Jackson.
@@ -71,33 +70,33 @@ public final class JacksonUtils {
     /**
      * Json string deserialize to Object.
      *
-     * @param json json string
-     * @param cls  class of object
-     * @param <T>  General type
+     * @param json  json string
+     * @param clazz class of object
+     * @param <T>   General type
      * @return object
      * @throws EduDeserializationException if deserialize failed
      */
-    public static <T> T toObj(byte[] json, Class<T> cls) {
+    public static <T> T toObj(byte[] json, Class<T> clazz) {
         try {
-            return toObj(new String(json, StandardCharsets.UTF_8), cls);
+            return toObj(new String(json, StandardCharsets.UTF_8), clazz);
         } catch (Exception e) {
 
-            throw new EduDeserializationException(cls, e);
+            throw new EduDeserializationException(clazz, e);
         }
     }
 
     /**
      * Json string deserialize to Object.
      *
-     * @param json json string
-     * @param cls  {@link Type} of object
-     * @param <T>  General type
+     * @param json  json string
+     * @param clazz {@link Type} of object
+     * @param <T>   General type
      * @return object
      * @throws EduDeserializationException if deserialize failed
      */
-    public static <T> T toObj(byte[] json, Type cls) {
+    public static <T> T toObj(byte[] json, Type clazz) {
         try {
-            return toObj(new String(json, StandardCharsets.UTF_8), cls);
+            return toObj(new String(json, StandardCharsets.UTF_8), clazz);
         } catch (Exception e) {
             throw new EduDeserializationException(e);
         }
@@ -107,14 +106,14 @@ public final class JacksonUtils {
      * Json string deserialize to Object.
      *
      * @param inputStream json string input stream
-     * @param cls         class of object
+     * @param clazz       class of object
      * @param <T>         General type
      * @return object
      * @throws EduDeserializationException if deserialize failed
      */
-    public static <T> T toObj(InputStream inputStream, Class<T> cls) {
+    public static <T> T toObj(InputStream inputStream, Class<T> clazz) {
         try {
-            return mapper.readValue(inputStream, cls);
+            return mapper.readValue(inputStream, clazz);
         } catch (IOException e) {
             throw new EduDeserializationException(e);
         }
@@ -140,17 +139,17 @@ public final class JacksonUtils {
     /**
      * Json string deserialize to Object.
      *
-     * @param json json string
-     * @param cls  class of object
-     * @param <T>  General type
+     * @param json  json string
+     * @param clazz class of object
+     * @param <T>   General type
      * @return object
      * @throws EduDeserializationException if deserialize failed
      */
-    public static <T> T toObj(String json, Class<T> cls) {
+    public static <T> T toObj(String json, Class<T> clazz) {
         try {
-            return mapper.readValue(json, cls);
+            return mapper.readValue(json, clazz);
         } catch (IOException e) {
-            throw new EduDeserializationException(cls, e);
+            throw new EduDeserializationException(clazz, e);
         }
     }
 
@@ -223,11 +222,11 @@ public final class JacksonUtils {
     /**
      * Register sub type for child class.
      *
-     * @param clz  child class
-     * @param type type name of child class
+     * @param clazz child class
+     * @param type  type name of child class
      */
-    public static void registerSubtype(Class<?> clz, String type) {
-        mapper.registerSubtypes(new NamedType(clz, type));
+    public static void registerSubtype(Class<?> clazz, String type) {
+        mapper.registerSubtypes(new NamedType(clazz, type));
     }
 
     /**
