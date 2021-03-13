@@ -38,12 +38,29 @@ public class CodeUtil {
         }
 
         // 初始化基本信息
+        System.out.println("======================= 开始初始化项目基本信息 =======================");
         ProjectProperties projectProperties = ProjectProperties.getInstance();
         projectProperties.init(projectPackage);
 
+        System.out.println("init project configuration...");
+        System.out.println("======================= 开始初始化JDBC连接信息 =======================");
         JdbcProperties jdbcProperties = JdbcProperties.getInstance();
         jdbcProperties.init(author, jdbcUrl, jdbcUser, jdbcPwd);
 
+        System.out.println("init jdbc configuration...");
+        System.out.println("=========================== 完成初始化 ============================");
+        System.out.println("=========================== 开始生成文件 ===========================");
+        System.out.println("");
+
         new CodeGenerator(tableNameArr, projectPath);
+
+        System.out.println("");
+        System.out.println("========================== 自动化生成完成 ==========================");
+        System.out.println("============= 在使用时需要在所属项目中增加如下 maven 依赖 =============");
+        System.out.println("");
+        System.out.println("<dependency>");
+        System.out.println("    <groupId>com.online4edu</groupId>");
+        System.out.println("    <artifactId>online4edu-dependencies</artifactId>");
+        System.out.println("</dependency>");
     }
 }
