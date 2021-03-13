@@ -15,12 +15,12 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class MyBatisPlusConfig {
 
-    @Bean
+   /* @Bean
     public PaginationInterceptor paginationInterceptor() {
         return new PaginationInterceptor();
-    }
+    }*/
 
-    @Bean
+    /*@Bean
     public OptimisticLockerInterceptor optimisticLockerInterceptor() {
         return new OptimisticLockerInterceptor();
     }
@@ -28,7 +28,7 @@ public class MyBatisPlusConfig {
     @Bean
     public CommonMetaObjectHandler commonMetaObjectHandler() {
         return new CommonMetaObjectHandler();
-    }
+    }*/
 
     @Bean
     public MybatisPlusSqlInjector mybatisPlusSqlInjector() {

@@ -25,16 +25,21 @@ public class UpdateAllColumnById extends AbstractMethod {
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         SqlMethod sqlMethod = SqlMethod.UPDATE_BY_ID;
-        String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(),
+        String sql = String.format(
+                sqlMethod.getSql(),
+                tableInfo.getTableName(),
                 sqlSet(false, tableInfo, ENTITY_DOT),
-                tableInfo.getKeyColumn(), ENTITY_DOT + tableInfo.getKeyProperty(),
-                new StringBuilder("<if test=\"et instanceof java.util.Map\">")
-                        .append("<if test=\"et.MP_OPTLOCK_VERSION_ORIGINAL!=null\">")
-                        .append(" AND ${et.MP_OPTLOCK_VERSION_COLUMN}=#{et.MP_OPTLOCK_VERSION_ORIGINAL}")
-                        .append("</if></if>"));
+                tableInfo.getKeyColumn(),
+                ENTITY_DOT + tableInfo.getKeyProperty(),
+                "<if test=\"et instanceof java.util.Map\">"
+                        + "<if test=\"et.MP_OPTLOCK_VERSION_ORIGINAL!=null\">"
+                                + "AND ${et.MP_OPTLOCK_VERSION_COLUMN}=#{et.MP_OPTLOCK_VERSION_ORIGINAL}"
+                        + "</if>"
+                + "</if>"
+        );
 
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
-        return addUpdateMappedStatement(mapperClass, modelClass, "updateAllColumnById", sqlSource);
+        return addUpdateMappedStatement(mapperClass, modelClass, getSqlMethod(), sqlSource);
     }
 
     /**
@@ -84,5 +89,9 @@ public class UpdateAllColumnById extends AbstractMethod {
         }
         sqlSet += COMMA;
         return sqlSet;
+    }
+
+    private String getSqlMethod() {
+        return "updateAllColumnById";
     }
 }

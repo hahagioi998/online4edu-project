@@ -1,20 +1,39 @@
 package com.online4edu.app.gateway.web;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.online4edu.app.gateway.domain.SysAdministrativeRegion;
+import com.online4edu.app.gateway.service.SysAdministrativeRegionService;
+import com.online4edu.dependencies.utils.result.ResponseMsgUtil;
+import com.online4edu.dependencies.utils.result.Result;
+import io.swagger.annotations.Api;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
+@Api(tags = "配置类")
 @RestController
 @RequestMapping("/config")
-@RefreshScope
 public class ConfigController {
 
-    @Value("${title}")
-    private String title;
+    @Autowired
+    private SysAdministrativeRegionService sysAdministrativeRegionService;
 
-    @RequestMapping("/get")
-    public String get() {
-        return title;
+
+    @GetMapping("/{id}")
+    public Result<SysAdministrativeRegion> get(@PathVariable String id) {
+        return ResponseMsgUtil.success(sysAdministrativeRegionService.getById(id));
     }
+
+    @GetMapping("/list")
+    public Result<List<SysAdministrativeRegion>> list() {
+        return ResponseMsgUtil.success(sysAdministrativeRegionService.list());
+    }
+
+    @PostMapping("/{id}")
+    public Result<Void> update(@PathVariable String id) {
+        SysAdministrativeRegion byId = sysAdministrativeRegionService.getById(id);
+        sysAdministrativeRegionService.updateAllColumnById(byId);
+        return ResponseMsgUtil.success();
+    }
+
 }

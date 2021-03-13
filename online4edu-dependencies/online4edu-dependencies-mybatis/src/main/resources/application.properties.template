@@ -1,5 +1,5 @@
 # Mapper 位置
-mybatis-plus.mapper-locations=classpath*:/mapper/**/*.xml
+mybatis-plus.mapper-locations=classpath*:mapper/**/*.xml
 # 自定义 MyBatisPlus 父级Mapper
 mybatis-plus.global-config.super-mapper-class=com.online4edu.dependencies.mybatis.mapper.BaseMapper
 # MyBatisPlus 逻辑删除
@@ -8,3 +8,4 @@ mybatis-plus.global-config.db-config.logic-delete-value=1
 mybatis-plus.global-config.db-config.logic-not-delete-value=0
 # MyBatis 日志记录器
 mybatis-plus.configuration.log-impl=org.apache.ibatis.logging.slf4j.Slf4jImpl
+mybatis-plus.global-config.banner=false
