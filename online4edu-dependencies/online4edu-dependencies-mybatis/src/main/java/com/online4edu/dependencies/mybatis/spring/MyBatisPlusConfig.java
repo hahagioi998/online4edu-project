@@ -1,7 +1,8 @@
-package com.online4edu.dependencies.mybatis;
+package com.online4edu.dependencies.mybatis.spring;
 
 import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
+import com.online4edu.dependencies.mybatis.CommonMetaObjectHandler;
 import com.online4edu.dependencies.mybatis.injector.MybatisPlusSqlInjector;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,12 +16,12 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class MyBatisPlusConfig {
 
-   /* @Bean
+    @Bean
     public PaginationInterceptor paginationInterceptor() {
         return new PaginationInterceptor();
-    }*/
+    }
 
-    /*@Bean
+    @Bean
     public OptimisticLockerInterceptor optimisticLockerInterceptor() {
         return new OptimisticLockerInterceptor();
     }
@@ -28,11 +29,16 @@ public class MyBatisPlusConfig {
     @Bean
     public CommonMetaObjectHandler commonMetaObjectHandler() {
         return new CommonMetaObjectHandler();
-    }*/
+    }
 
     @Bean
     public MybatisPlusSqlInjector mybatisPlusSqlInjector() {
         return new MybatisPlusSqlInjector();
+    }
+
+    @Bean
+    public MyBatisPlusBeanFactoryPostProcessor myBatisPlusBeanFactoryPostProcessor() {
+        return new MyBatisPlusBeanFactoryPostProcessor();
     }
 
 }
