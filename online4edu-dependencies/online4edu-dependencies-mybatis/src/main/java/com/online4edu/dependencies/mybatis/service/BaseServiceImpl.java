@@ -18,7 +18,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.SqlSession;
 import org.mybatis.spring.SqlSessionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ReflectionUtils;
 
@@ -30,19 +29,25 @@ import java.util.stream.Collectors;
 
 /**
  * 抽象 Service
+ * <p>
+ * 借助 BeanFactoryPostProcessor 完成依赖注入
  *
  * @author Shilin <br > mingrn97@gmail.com
  * @date 2021/03/06 00:18
+ * @see com.online4edu.dependencies.mybatis.spring.MyBatisPlusBeanFactoryPostProcessor
  */
 @Slf4j
 public abstract class BaseServiceImpl<T, V extends T, M extends BaseMapper<T, V>>
         implements BaseService<T, V> {
 
-    private M baseMapper;
+    protected M baseMapper;
 
     private Class<T> currentModelClass;
 
-    @Autowired
+    /**
+     * 自动注入 baseMapper?
+     * {@link com.online4edu.dependencies.mybatis.spring.MyBatisPlusBeanFactoryPostProcessor}
+     */
     public void setBaseMapper(M baseMapper) {
         this.baseMapper = baseMapper;
     }

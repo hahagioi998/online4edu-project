@@ -1,6 +1,6 @@
 package com.online4edu.app.gateway.config;
 
-import com.online4edu.dependencies.mybatis.MyBatisPlusConfig;
+import com.online4edu.dependencies.mybatis.spring.MyBatisPlusConfig;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
