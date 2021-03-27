@@ -20,14 +20,14 @@ import java.util.Map;
  * @date 2021/03/07 16:52
  * @see com.baomidou.mybatisplus.core.mapper.BaseMapper
  */
-public interface QueryMapper<T, V extends T> {
+public interface QueryMapper<T, V extends T, Pk extends Serializable> {
 
     /**
      * 根据 ID 查询
      *
      * @param id 主键ID
      */
-    T selectById(Serializable id);
+    T selectById(Pk id);
 
     /**
      * 根据 entity 条件，查询一条记录
@@ -41,7 +41,7 @@ public interface QueryMapper<T, V extends T> {
      *
      * @param idList 主键ID列表(不能为 null 以及 empty)
      */
-    List<T> selectBatchIds(@Param(Constants.COLLECTION) Collection<? extends Serializable> idList);
+    List<T> selectBatchIds(@Param(Constants.COLLECTION) Collection<Pk> idList);
 
     /**
      * 根据 entity 条件，查询全部记录

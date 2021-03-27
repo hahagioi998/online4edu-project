@@ -1,5 +1,6 @@
 package com.online4edu.dependencies.mybatis.mapper;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -12,7 +13,7 @@ import java.util.List;
  * @date 2021/03/07 16:52
  * @see com.baomidou.mybatisplus.core.mapper.BaseMapper
  */
-public interface InsertMapper<T, V extends T> {
+public interface InsertMapper<T, V extends T, Pk extends Serializable> {
 
     /**
      * 插入一条记录

@@ -1,9 +1,10 @@
 package com.online4edu.dependencies.mybatis.service;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
-public interface InsertService<T, V extends T> {
+public interface InsertService<T, V extends T, Pk extends Serializable> {
 
     /**
      * 插入一条记录（选择字段，策略插入）

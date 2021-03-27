@@ -11,6 +11,7 @@ import com.baomidou.mybatisplus.extension.conditions.AbstractChainWrapper;
 import com.online4edu.dependencies.mybatis.service.BaseService;
 import org.apache.ibatis.logging.Log;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -23,13 +24,13 @@ import java.util.function.Predicate;
  * @date 2021/03/06 00:03
  */
 @SuppressWarnings("unchecked")
-public class LambdaQueryWrapperChain<T, V extends T>
-        extends AbstractChainWrapper<T, SFunction<T, ?>, LambdaQueryWrapperChain<T, V>, LambdaQueryWrapper<T>>
-        implements Query<LambdaQueryWrapperChain<T, V>, T, SFunction<T, ?>> {
+public class LambdaQueryWrapperChain<T, V extends T, Pk extends Serializable>
+        extends AbstractChainWrapper<T, SFunction<T, ?>, LambdaQueryWrapperChain<T, V, Pk>, LambdaQueryWrapper<T>>
+        implements Query<LambdaQueryWrapperChain<T, V, Pk>, T, SFunction<T, ?>> {
 
-    private final BaseService<T, V> baseService;
+    private final BaseService<T, V, Pk> baseService;
 
-    public LambdaQueryWrapperChain(BaseService<T, V> baseService) {
+    public LambdaQueryWrapperChain(BaseService<T, V, Pk> baseService) {
         super();
         this.baseService = baseService;
         super.wrapperChildren = new LambdaQueryWrapper<>();
@@ -37,19 +38,19 @@ public class LambdaQueryWrapperChain<T, V extends T>
 
     @SafeVarargs
     @Override
-    public final LambdaQueryWrapperChain<T, V> select(SFunction<T, ?>... columns) {
+    public final LambdaQueryWrapperChain<T, V, Pk> select(SFunction<T, ?>... columns) {
         wrapperChildren.select(columns);
         return typedThis;
     }
 
     @Override
-    public LambdaQueryWrapperChain<T, V> select(Predicate<TableFieldInfo> predicate) {
+    public LambdaQueryWrapperChain<T, V, Pk> select(Predicate<TableFieldInfo> predicate) {
         wrapperChildren.select(predicate);
         return typedThis;
     }
 
     @Override
-    public LambdaQueryWrapperChain<T, V> select(Class<T> entityClass, Predicate<TableFieldInfo> predicate) {
+    public LambdaQueryWrapperChain<T, V, Pk> select(Class<T> entityClass, Predicate<TableFieldInfo> predicate) {
         wrapperChildren.select(entityClass, predicate);
         return typedThis;
     }

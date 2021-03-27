@@ -37,8 +37,8 @@ import java.util.stream.Collectors;
  * @see com.online4edu.dependencies.mybatis.spring.MyBatisPlusBeanFactoryPostProcessor
  */
 @Slf4j
-public abstract class BaseServiceImpl<T, V extends T, M extends BaseMapper<T, V>>
-        implements BaseService<T, V> {
+public abstract class BaseServiceImpl<T, V extends T, M extends BaseMapper<T, V, Pk>, Pk extends Serializable>
+        implements BaseService<T, V, Pk> {
 
     protected M baseMapper;
 
@@ -195,7 +195,7 @@ public abstract class BaseServiceImpl<T, V extends T, M extends BaseMapper<T, V>
                     // 尝试更新, 更新成功直接返回. 更新失败继续尝试执行新增操作
                     log.debug("Primary key id is not set values, the implementation of [modification] operations.");
 
-                    return Objects.nonNull(getById((Serializable) idVal)) ? updateById(entity) : insert(entity);
+                    return Objects.nonNull(getById((Pk) idVal)) ? updateById(entity) : insert(entity);
                 }
             } else {
                 throw ExceptionUtils.mpe("Error: Can not execute, Could not find @TableId.");
@@ -210,17 +210,17 @@ public abstract class BaseServiceImpl<T, V extends T, M extends BaseMapper<T, V>
     }
 
     @Override
-    public int up(Serializable id, Class<T> currentModelClass) {
+    public int up(Pk id, Class<T> currentModelClass) {
         throw new UnsupportedOperationException("该功能当前未做实现, 不支持使用");
     }
 
     @Override
-    public int down(Serializable id, Class<T> currentModelClass) {
+    public int down(Pk id, Class<T> currentModelClass) {
         throw new UnsupportedOperationException("该功能当前未做实现, 不支持使用");
     }
 
     @Override
-    public int top(Serializable id, Class<T> currentModelClass) {
+    public int top(Pk id, Class<T> currentModelClass) {
         throw new UnsupportedOperationException("该功能当前未做实现, 不支持使用");
     }
 
@@ -229,11 +229,20 @@ public abstract class BaseServiceImpl<T, V extends T, M extends BaseMapper<T, V>
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean deleteById(Serializable id) {
+    public boolean deleteById(Pk id) {
         if (Objects.nonNull(id)) {
             return retBool(baseMapper.deleteById(id));
         }
         return false;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int deleteBatch(Collection<Pk> idList) {
+        if (CollectionUtils.isNotEmpty(idList)) {
+            baseMapper.deleteBatchIds(idList);
+        }
+        return 0;
     }
 
     @Override
@@ -245,7 +254,7 @@ public abstract class BaseServiceImpl<T, V extends T, M extends BaseMapper<T, V>
     // ========================================== Select =========================================================
 
     @Override
-    public T getById(Serializable id) {
+    public T getById(Pk id) {
         if (Objects.nonNull(id)) {
             return baseMapper.selectById(id);
         }

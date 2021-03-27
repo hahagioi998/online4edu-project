@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import org.apache.ibatis.annotations.Param;
 
+import java.io.Serializable;
+
 /**
  * 基础 Mapper
  *
@@ -14,7 +16,7 @@ import org.apache.ibatis.annotations.Param;
  * @date 2021/03/07 16:52
  * @see com.baomidou.mybatisplus.core.mapper.BaseMapper
  */
-public interface UpdateMapper<T, V extends T> {
+public interface UpdateMapper<T, V extends T, Pk extends Serializable> {
 
     /**
      * 根据 ID 修改

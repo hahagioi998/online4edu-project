@@ -23,6 +23,7 @@ public class ProjectProperties {
     private String mapper;
     private String service;
     private String serviceImpl;
+    private String web;
 
     /**
      * Mapper 基础继承接口
@@ -45,5 +46,6 @@ public class ProjectProperties {
         this.mapper = projectPackage + ".mapper";
         this.service = projectPackage + ".service";
         this.serviceImpl = this.service + ".impl";
+        this.web = projectPackage + ".web";
     }
 }

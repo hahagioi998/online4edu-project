@@ -18,14 +18,14 @@ import java.util.Map;
  * @date 2021/03/07 16:52
  * @see com.baomidou.mybatisplus.core.mapper.BaseMapper
  */
-public interface DeleteMapper<T, V extends T> {
+public interface DeleteMapper<T, V extends T, Pk extends Serializable> {
 
     /**
      * 根据 ID 删除
      *
      * @param id 主键ID
      */
-    int deleteById(Serializable id);
+    int deleteById(Pk id);
 
     /**
      * 根据 columnMap 条件，删除记录
@@ -46,5 +46,5 @@ public interface DeleteMapper<T, V extends T> {
      *
      * @param idList 主键ID列表(不能为 null 以及 empty)
      */
-    int deleteBatchIds(@Param(Constants.COLLECTION) Collection<? extends Serializable> idList);
+    int deleteBatchIds(@Param(Constants.COLLECTION) Collection<Pk> idList);
 }

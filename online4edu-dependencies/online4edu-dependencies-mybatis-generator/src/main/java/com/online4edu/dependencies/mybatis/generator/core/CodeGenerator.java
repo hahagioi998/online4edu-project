@@ -27,20 +27,13 @@ import java.util.Map;
  * @see SimpleJavaTypeResolverImpl
  */
 public class CodeGenerator {
-    /**
-     * java文件目录
-     */
+
     private static final String JAVA_PATH = "/src/main/java";
-    /**
-     * 资源文件目录
-     */
     private static final String RESOURCES_PATH = "/src/main/resources";
-    /**
-     * JDBC驱动
-     */
     private static final String JDBC_DIVER_CLASS_NAME = "com.mysql.jdbc.Driver";
 
     private static String vo;
+    private static String web;
     private static String service;
     private static String serviceImpl;
     private static final String DATE = (new SimpleDateFormat("dd/MM/yyyy HH:mm")).format(new Date());
@@ -55,6 +48,7 @@ public class CodeGenerator {
 
         ProjectProperties instance = ProjectProperties.getInstance();
         vo = packageConvertPath(instance.getVo());
+        web = packageConvertPath(instance.getWeb());
         service = packageConvertPath(instance.getService());
         serviceImpl = packageConvertPath(instance.getServiceImpl());
 
@@ -128,6 +122,7 @@ public class CodeGenerator {
 //        CodeGenerator.genMyBatisConfig(projectPath);
         CodeGenerator.genService(tableName, domainName, description, pkDataType, projectPath);
         CodeGenerator.genVO(tableName, domainName, description, projectPath);
+        CodeGenerator.genWeb(tableName, domainName, description, pkDataType, projectPath);
 //        String newName = projectPath.substring(projectPath.indexOf("\\") + 1);
 //		CodeGenerator.genPom(newName, projectPath);
     }
@@ -258,30 +253,46 @@ public class CodeGenerator {
     private static void genService(String tableName, String domainName,
                                    String description, String pkDataType, String projectPath) {
         try {
-            Map<String, Object> data = new HashMap<String, Object>(16);
-            String desc = StringUtils.isEmpty(description) ? "" : description;
-            data.put("description", desc);
-            data.put("date", DATE);
-            data.put("author", JdbcProperties.getInstance().getAuthor());
-            data.put("pkDataType", pkDataType);
-            String domainNameUpperCamel = StringUtils.isEmpty(domainName) ? tableNameConvertUpperCamel(tableName) : domainName;
-            data.put("domainNameUpperCamel", domainNameUpperCamel);
-            data.put("domainNameLowerCamel", tableNameConvertLowerCamel(tableName));
-            data.put("basePackage", ProjectProperties.getInstance().getProjectPackage());
-            File service = new File(projectPath + JAVA_PATH + CodeGenerator.service + domainNameUpperCamel + "Service.java");
+            Map<String, Object> data = ftlVar(pkDataType, tableName, domainName, description);
+            File service = new File(projectPath + JAVA_PATH + CodeGenerator.service + data.get("domainNameUpperCamel") + "Service.java");
             if (!service.getParentFile().exists()) {
                 service.getParentFile().mkdirs();
             }
 
             getConfiguration().getTemplate("service.ftl").process(data, new FileWriter(service));
-            System.out.println(domainNameUpperCamel + "Service.java 生成成功");
-            File serviceImpl = new File(projectPath + JAVA_PATH + CodeGenerator.serviceImpl + domainNameUpperCamel + "ServiceImpl.java");
+            System.out.println(data.get("domainNameUpperCamel") + "Service.java 生成成功");
+            File serviceImpl = new File(projectPath + JAVA_PATH + CodeGenerator.serviceImpl + data.get("domainNameUpperCamel") + "ServiceImpl.java");
             if (!serviceImpl.getParentFile().exists()) {
                 serviceImpl.getParentFile().mkdirs();
             }
 
             getConfiguration().getTemplate("service-impl.ftl").process(data, new FileWriter(serviceImpl));
-            System.out.println(domainNameUpperCamel + "ServiceImpl.java 生成成功");
+            System.out.println(data.get("domainNameUpperCamel") + "ServiceImpl.java 生成成功");
+        } catch (Exception var14) {
+            throw new RuntimeException("生成Service失败", var14);
+        }
+    }
+
+    /**
+     * Web 文件生成
+     *
+     * @param tableName   表名
+     * @param domainName  实体类
+     * @param description 描述
+     * @param pkDataType  主键类型
+     * @param projectPath 项目生成地址
+     */
+    private static void genWeb(String tableName, String domainName,
+                               String description, String pkDataType, String projectPath) {
+        try {
+            Map<String, Object> data = ftlVar(pkDataType, tableName, domainName, description);
+            File service = new File(projectPath + JAVA_PATH + CodeGenerator.web + data.get("domainNameUpperCamel") + "Controller.java");
+            if (!service.getParentFile().exists()) {
+                service.getParentFile().mkdirs();
+            }
+
+            getConfiguration().getTemplate("web.ftl").process(data, new FileWriter(service));
+            System.out.println(data.get("domainNameUpperCamel") + "Controller.java 生成成功");
         } catch (Exception var14) {
             throw new RuntimeException("生成Service失败", var14);
         }
@@ -297,23 +308,14 @@ public class CodeGenerator {
      */
     private static void genVO(String tableName, String domainName, String description, String projectPath) {
         try {
-            Map<String, Object> data = new HashMap<String, Object>(16);
-            String desc = StringUtils.isEmpty(description) ? "" : description;
-            data.put("description", desc);
-            data.put("date", DATE);
-            data.put("author", JdbcProperties.getInstance().getAuthor());
-            String domainNameUpperCamel = StringUtils.isEmpty(domainName) ? tableNameConvertUpperCamel(tableName) : domainName;
-            data.put("baseRequestMapping", domainNameConvertMappingPath(domainNameUpperCamel));
-            data.put("domainNameUpperCamel", domainNameUpperCamel);
-            data.put("domainNameLowerCamel", CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, domainNameUpperCamel));
-            data.put("basePackage", ProjectProperties.getInstance().getProjectPackage());
-            File file = new File(projectPath + JAVA_PATH + vo + domainNameUpperCamel + "VO.java");
+            Map<String, Object> data = ftlVar(null, tableName, domainName, description);
+            File file = new File(projectPath + JAVA_PATH + vo + data.get("domainNameUpperCamel") + "VO.java");
             if (!file.getParentFile().exists()) {
                 file.getParentFile().mkdirs();
             }
 
             getConfiguration().getTemplate("vo.ftl").process(data, new FileWriter(file));
-            System.out.println(domainNameUpperCamel + "DTO.java 生成成功");
+            System.out.println(data.get("domainNameUpperCamel") + "DTO.java 生成成功");
         } catch (Exception var12) {
             throw new RuntimeException("生成DTO失败", var12);
         }
@@ -380,5 +382,24 @@ public class CodeGenerator {
      */
     private static String packageConvertPath(String packageName) {
         return String.format("/%s/", packageName.contains(".") ? packageName.replaceAll("\\.", "/") : packageName);
+    }
+
+    private static Map<String, Object> ftlVar(String pkDataType, String tableName, String domainName, String description) {
+
+        Map<String, Object> data = new HashMap<String, Object>(16);
+
+        String desc = StringUtils.isEmpty(description) ? "" : description;
+        data.put("pkDataType", pkDataType);
+        data.put("date", DATE);
+        data.put("description", desc);
+        data.put("author", JdbcProperties.getInstance().getAuthor());
+
+        String domainNameUpperCamel = StringUtils.isEmpty(domainName) ? tableNameConvertUpperCamel(tableName) : domainName;
+        data.put("baseRequestMapping", domainNameConvertMappingPath(domainNameUpperCamel));
+        data.put("domainNameUpperCamel", domainNameUpperCamel);
+        data.put("domainNameLowerCamel", CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, domainNameUpperCamel));
+        data.put("basePackage", ProjectProperties.getInstance().getProjectPackage());
+
+        return data;
     }
 }

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 
 import java.io.Serializable;
+import java.util.Collection;
 
 /**
  * 基础 DeleteService
@@ -14,7 +15,7 @@ import java.io.Serializable;
  * @author Shilin <br > mingrn97@gmail.com
  * @date 2021/03/05 23:44
  */
-public interface DeleteService<T, V extends T> {
+public interface DeleteService<T, V extends T, Pk extends Serializable> {
 
     /**
      * 根据 ID 删除
@@ -22,7 +23,15 @@ public interface DeleteService<T, V extends T> {
      * @param id 主键ID
      * @return 删除成功返回 true, 否则删除失败
      */
-    boolean deleteById(Serializable id);
+    boolean deleteById(Pk id);
+
+    /**
+     * 批量删除
+     *
+     * @param idList 主键ID集合
+     * @return 删除成功个数
+     */
+    int deleteBatch(Collection<Pk> idList);
 
     /**
      * 删除所有记录

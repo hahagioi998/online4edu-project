@@ -1,7 +1,7 @@
 package com.online4edu.app.gateway.web;
 
-import com.online4edu.app.gateway.domain.SysAdministrativeRegion;
-import com.online4edu.app.gateway.service.SysAdministrativeRegionService;
+//import com.online4edu.app.gateway.domain.SysAdministrativeRegion;
+//import com.online4edu.app.gateway.service.SysAdministrativeRegionService;
 import com.online4edu.dependencies.utils.result.ResponseMsgUtil;
 import com.online4edu.dependencies.utils.result.Result;
 import io.swagger.annotations.Api;
@@ -15,7 +15,7 @@ import java.util.List;
 @RequestMapping("/config")
 public class ConfigController {
 
-    @Autowired
+    /*@Autowired
     private SysAdministrativeRegionService sysAdministrativeRegionService;
 
 
@@ -34,6 +34,6 @@ public class ConfigController {
         SysAdministrativeRegion byId = sysAdministrativeRegionService.getById(id);
         sysAdministrativeRegionService.updateAllColumnById(byId);
         return ResponseMsgUtil.success();
-    }
+    }*/
 
 }

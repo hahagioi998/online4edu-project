@@ -2,9 +2,10 @@ package com.online4edu.dependencies.mybatis.service;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 
+import java.io.Serializable;
 import java.util.Collection;
 
-public interface UpdateService<T, V extends T> {
+public interface UpdateService<T, V extends T, Pk extends Serializable> {
 
     /**
      * 批量大小

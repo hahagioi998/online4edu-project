@@ -12,6 +12,6 @@ import java.lang.${pkDataType};
  * @date ${date}
  */
 public interface ${domainNameUpperCamel}Service
-        extends BaseService<${domainNameUpperCamel}, ${domainNameUpperCamel}VO> {
+        extends BaseService<${domainNameUpperCamel}, ${domainNameUpperCamel}VO, ${pkDataType}> {
 
 }

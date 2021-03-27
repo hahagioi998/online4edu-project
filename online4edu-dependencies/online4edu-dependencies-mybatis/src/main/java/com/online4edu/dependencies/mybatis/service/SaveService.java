@@ -13,8 +13,8 @@ import java.util.Collection;
  * @date 2021/03/05 18:57
  * @see com.baomidou.mybatisplus.core.mapper.BaseMapper
  */
-public interface SaveService<T, V extends T>
-        extends InsertService<T, V>, UpdateService<T, V> {
+public interface SaveService<T, V extends T, Pk extends Serializable>
+        extends InsertService<T, V, Pk>, UpdateService<T, V, Pk> {
 
     /**
      * TableId 注解存在更新记录，否插入一条记录
@@ -47,7 +47,7 @@ public interface SaveService<T, V extends T>
      * @return 成功执行行数
      * @see com.baomidou.mybatisplus.annotation.TableName
      */
-    default int up(Serializable id, Class<T> currentModelClass) {
+    default int up(Pk id, Class<T> currentModelClass) {
         throw new UnsupportedOperationException("该功能当前未做实现, 不支持使用");
     }
 
@@ -62,7 +62,7 @@ public interface SaveService<T, V extends T>
      * @return 成功执行行数
      * @see com.baomidou.mybatisplus.annotation.TableName
      */
-    default int down(Serializable id, Class<T> currentModelClass) {
+    default int down(Pk id, Class<T> currentModelClass) {
         throw new UnsupportedOperationException("该功能当前未做实现, 不支持使用");
     }
 
@@ -77,7 +77,7 @@ public interface SaveService<T, V extends T>
      * @return 成功执行行数
      * @see com.baomidou.mybatisplus.annotation.TableName
      */
-    default int top(Serializable id, Class<T> currentModelClass) {
+    default int top(Pk id, Class<T> currentModelClass) {
         throw new UnsupportedOperationException("该功能当前未做实现, 不支持使用");
     }
 }

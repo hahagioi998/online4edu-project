@@ -1,6 +1,7 @@
 package com.online4edu.dependencies.mybatis.generator.plugin;
 
 import com.online4edu.dependencies.mybatis.generator.core.ProjectProperties;
+import org.mybatis.generator.api.IntrospectedColumn;
 import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.PluginAdapter;
 import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
@@ -113,6 +114,12 @@ public class MapperPluginAdapter extends PluginAdapter {
         FullyQualifiedJavaType entityType = new FullyQualifiedJavaType(introspectedTable.getBaseRecordType());
         entityInterface.addImportedType(entityType);
 
+        // 主键PK
+        List<IntrospectedColumn> primaryKeyColumns = introspectedTable.getPrimaryKeyColumns();
+        FullyQualifiedJavaType pkFullyQualifiedJavaType = primaryKeyColumns.get(0).getFullyQualifiedJavaType();
+        String pkType = pkFullyQualifiedJavaType.getShortName();
+        // String packageName = pkFullyQualifiedJavaType.getPackageName();
+
         //import接口
         for (String mapperRefer : mappers) {
             if (ProjectProperties.BASE_MAPPER_INTERFACE.equals(mapperRefer)) {
@@ -124,7 +131,7 @@ public class MapperPluginAdapter extends PluginAdapter {
                 entityInterface.addImportedType(new FullyQualifiedJavaType(mapperRefer));
                 entityInterface.addImportedType(new FullyQualifiedJavaType(voImportRefer));
                 entityInterface.addSuperInterface(new FullyQualifiedJavaType(
-                        mapperRefer + "<" + entityClassShortName + ", " + voClassShortName + ">"));
+                        mapperRefer + "<" + entityClassShortName + ", " + voClassShortName + ", " + pkType + ">"));
             }
         }
         return true;
