@@ -255,7 +255,8 @@ public class CodeGenerator {
      * @param pkDataType  主键类型
      * @param projectPath 项目生成地址
      */
-    private static void genService(String tableName, String domainName, String description, String pkDataType, String projectPath) {
+    private static void genService(String tableName, String domainName,
+                                   String description, String pkDataType, String projectPath) {
         try {
             Map<String, Object> data = new HashMap<String, Object>(16);
             String desc = StringUtils.isEmpty(description) ? "" : description;
@@ -267,19 +268,19 @@ public class CodeGenerator {
             data.put("domainNameUpperCamel", domainNameUpperCamel);
             data.put("domainNameLowerCamel", tableNameConvertLowerCamel(tableName));
             data.put("basePackage", ProjectProperties.getInstance().getProjectPackage());
-            File file = new File(projectPath + JAVA_PATH + service + domainNameUpperCamel + "Service.java");
-            if (!file.getParentFile().exists()) {
-                file.getParentFile().mkdirs();
+            File service = new File(projectPath + JAVA_PATH + CodeGenerator.service + domainNameUpperCamel + "Service.java");
+            if (!service.getParentFile().exists()) {
+                service.getParentFile().mkdirs();
             }
 
-            getConfiguration().getTemplate("service.ftl").process(data, new FileWriter(file));
+            getConfiguration().getTemplate("service.ftl").process(data, new FileWriter(service));
             System.out.println(domainNameUpperCamel + "Service.java 生成成功");
-            File file1 = new File(projectPath + JAVA_PATH + serviceImpl + domainNameUpperCamel + "ServiceImpl.java");
-            if (!file1.getParentFile().exists()) {
-                file1.getParentFile().mkdirs();
+            File serviceImpl = new File(projectPath + JAVA_PATH + CodeGenerator.serviceImpl + domainNameUpperCamel + "ServiceImpl.java");
+            if (!serviceImpl.getParentFile().exists()) {
+                serviceImpl.getParentFile().mkdirs();
             }
 
-            getConfiguration().getTemplate("service-impl.ftl").process(data, new FileWriter(file1));
+            getConfiguration().getTemplate("service-impl.ftl").process(data, new FileWriter(serviceImpl));
             System.out.println(domainNameUpperCamel + "ServiceImpl.java 生成成功");
         } catch (Exception var14) {
             throw new RuntimeException("生成Service失败", var14);
@@ -342,7 +343,7 @@ public class CodeGenerator {
     /**
      * freemarker 配置
      */
-    private static freemarker.template.Configuration getConfiguration() throws IOException {
+    private static freemarker.template.Configuration getConfiguration() {
         freemarker.template.Configuration cfg = new freemarker.template.Configuration(freemarker.template.Configuration.VERSION_2_3_28);
         cfg.setClassLoaderForTemplateLoading(CodeGenerator.class.getClassLoader(), "template/");
         cfg.setDefaultEncoding("UTF-8");
@@ -364,17 +365,11 @@ public class CodeGenerator {
         return CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, tableName.toLowerCase());
     }
 
-    /**
-     *
-     */
     private static String tableNameConvertMappingPath(String tableName) {
         tableName = tableName.toLowerCase();
         return "/" + CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, tableName);
     }
 
-    /**
-     *
-     */
     private static String domainNameConvertMappingPath(String domainName) {
         String tableName = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, domainName);
         return tableNameConvertMappingPath(tableName);

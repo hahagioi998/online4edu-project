@@ -108,7 +108,6 @@ public class MapperCommentGenerator implements CommentGenerator {
     public void addModelClassComment(TopLevelClass topLevelClass, IntrospectedTable introspectedTable) {
         // 在类上导入包
         topLevelClass.addImportedType("com.baomidou.mybatisplus.annotation.*");
-        topLevelClass.addImportedType("io.swagger.annotations.ApiModel");
         topLevelClass.addImportedType("io.swagger.annotations.ApiModelProperty");
         topLevelClass.addImportedType("lombok.*");
 
@@ -129,6 +128,7 @@ public class MapperCommentGenerator implements CommentGenerator {
 
         String remarks = introspectedTable.getRemarks();
         if (StringUtils.isNotBlank(remarks)) {
+            topLevelClass.addImportedType("io.swagger.annotations.ApiModel");
             topLevelClass.addAnnotation("@ApiModel(\"" + remarks.trim() + "\")");
         }
 
