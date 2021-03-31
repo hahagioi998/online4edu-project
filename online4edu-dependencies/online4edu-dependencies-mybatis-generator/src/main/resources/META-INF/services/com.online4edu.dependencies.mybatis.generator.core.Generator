@@ -1,0 +1,4 @@
+com.online4edu.dependencies.mybatis.generator.core.DomainAndMapperGenerator
+com.online4edu.dependencies.mybatis.generator.core.ServiceGenerator
+com.online4edu.dependencies.mybatis.generator.core.VOGenerator
+com.online4edu.dependencies.mybatis.generator.core.WebGenerator

@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 // @Transactional
 public class ${domainNameUpperCamel}ServiceImpl
-        extends BaseServiceImpl<${domainNameUpperCamel}, ${domainNameUpperCamel}VO, ${domainNameUpperCamel}Mapper, ${pkDataType}>
+        extends BaseServiceImpl<${domainNameUpperCamel}, ${domainNameUpperCamel}VO, ${domainNameUpperCamel}Mapper, ${pkJavaType}>
         implements ${domainNameUpperCamel}Service {
 
 }

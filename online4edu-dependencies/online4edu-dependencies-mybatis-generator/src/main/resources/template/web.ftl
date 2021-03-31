@@ -26,7 +26,7 @@ public class ${domainNameUpperCamel}Controller {
     @GetMapping("/{id}")
     @ApiOperation("通过主键ID查询")
     @ApiImplicitParam(name = "id", value = "主键ID")
-    public Result<${domainNameUpperCamel}> get(@PathVariable ${pkDataType} id) {
+    public Result<${domainNameUpperCamel}> get(@PathVariable ${pkJavaType} id) {
         return ResponseMsgUtil.success(${domainNameLowerCamel}Service.getById(id));
     }
 
@@ -41,20 +41,20 @@ public class ${domainNameUpperCamel}Controller {
             @RequestParam(defaultValue = "10") Integer pageSize) {
 
         IPage<${domainNameUpperCamel}> page = new Page<>(pageNumber, pageSize);
-        return ResponseMsgUtil.success(sysAdministrativeRegionService.page(page));
+        return ResponseMsgUtil.success(${domainNameLowerCamel}Service.page(page));
     }
 
     @DeleteMapping("/{id}")
     @ApiOperation("通过主键ID删除")
     @ApiImplicitParam(name = "id", value = "主键ID")
-    public Result<${"Boolean"}> delete(@PathVariable ${pkDataType} id) {
+    public Result<${"Boolean"}> delete(@PathVariable ${pkJavaType} id) {
         return ResponseMsgUtil.success(${domainNameLowerCamel}Service.deleteById(id));
     }
 
     @DeleteMapping("/deleteBatch")
     @ApiOperation("通过主键ID集合批量删除")
     @ApiImplicitParam(name = "idList", value = "主键ID集合")
-    public Result<${"Integer"}> deleteBatch(@RequestBody List<${pkDataType}> idList) {
+    public Result<${"Integer"}> deleteBatch(@RequestBody List<${pkJavaType}> idList) {
         return ResponseMsgUtil.success(${domainNameLowerCamel}Service.deleteBatch(idList));
     }
 }

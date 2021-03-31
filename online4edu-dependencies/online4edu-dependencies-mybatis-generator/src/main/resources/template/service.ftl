@@ -3,7 +3,7 @@ package ${basePackage}.service;
 import ${basePackage}.domain.${domainNameUpperCamel};
 import ${basePackage}.vo.${domainNameUpperCamel}VO;
 import com.online4edu.dependencies.mybatis.service.BaseService;
-import java.lang.${pkDataType};
+import java.lang.${pkJavaType};
 
 /**
  * ${description} - Service接口类
@@ -12,6 +12,6 @@ import java.lang.${pkDataType};
  * @date ${date}
  */
 public interface ${domainNameUpperCamel}Service
-        extends BaseService<${domainNameUpperCamel}, ${domainNameUpperCamel}VO, ${pkDataType}> {
+        extends BaseService<${domainNameUpperCamel}, ${domainNameUpperCamel}VO, ${pkJavaType}> {
 
 }

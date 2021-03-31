@@ -1,6 +1,6 @@
 package com.online4edu.dependencies.mybatis.generator.plugin;
 
-import com.online4edu.dependencies.mybatis.generator.core.ProjectProperties;
+import com.online4edu.dependencies.mybatis.generator.domain.ProjectProperties;
 import org.mybatis.generator.api.IntrospectedColumn;
 import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.PluginAdapter;
@@ -126,7 +126,7 @@ public class MapperPluginAdapter extends PluginAdapter {
 
                 String entityClassShortName = entityType.getShortName();
                 String voClassShortName = entityClassShortName + "VO";
-                String voImportRefer = ProjectProperties.getInstance().getVo() + "." + voClassShortName;
+                String voImportRefer = ProjectProperties.getInstance().getPackageVO() + "." + voClassShortName;
 
                 entityInterface.addImportedType(new FullyQualifiedJavaType(mapperRefer));
                 entityInterface.addImportedType(new FullyQualifiedJavaType(voImportRefer));

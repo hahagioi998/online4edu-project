@@ -1,4 +1,4 @@
-package com.online4edu.dependencies.mybatis.generator.core;
+package com.online4edu.dependencies.mybatis.generator.domain;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -39,6 +39,7 @@ public class JdbcProperties {
     }
 
     public String getJdbcUrl() {
+
         char segmentation = '&';
         if (!jdbcUrl.contains("?")) {
             segmentation = '?';

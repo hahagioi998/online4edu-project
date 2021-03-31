@@ -56,7 +56,8 @@
     </dependencies>
 
     <build>
-        <resources>
+        <!-- 需要配置资源扫描? -->
+        <!--<resources>
             <resource>
                 <directory>src/main/java</directory>
                 <includes>
@@ -75,6 +76,6 @@
                 </includes>
                 <filtering>false</filtering>
             </resource>
-        </resources>
+        </resources>-->
     </build>
 </project>
