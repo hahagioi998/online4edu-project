@@ -1,6 +1,6 @@
 package com.online4edu.app.gateway;
 
-import com.online4edu.dependencies.mybatis.generator.util.CodeUtil;
+import com.online4edu.dependencies.mybatis.generator.util.CodeGeneratorUtil;
 import org.junit.Test;
 
 /**
@@ -22,8 +22,7 @@ public class MyBatisGenerator {
         String[][] tableNames = {
                 {"sys_administrative_region", "", "行政区划", "id", "String"},
         };
-
-        CodeUtil.create(tableNames, AUTHOR, JDBC_URL, JDBC_USERNAME, JDBC_PASSWORD, PROJECT_PATH, PROJECT_PACKAGE);
+        CodeGeneratorUtil.create(tableNames, AUTHOR, JDBC_URL, JDBC_USERNAME, JDBC_PASSWORD, PROJECT_PATH, PROJECT_PACKAGE, null);
 
     }
 
