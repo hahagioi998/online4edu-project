@@ -10,7 +10,6 @@ import org.mybatis.generator.config.*;
 import org.mybatis.generator.internal.DefaultShellCallback;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -24,12 +23,8 @@ public class DomainAndMapperGenerator implements Generator {
     private static final String JDBC_DIVER_CLASS_NAME = "com.mysql.jdbc.Driver";
 
     @Override
-    public void fileGenerator(TableSign tableSign) {
-        fileGenerator(Collections.singletonList(tableSign));
-    }
-
-    @Override
     public void fileGenerator(List<TableSign> tableSignList) {
+
         Context context = initContext();
 
         // jdbc 连接

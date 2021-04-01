@@ -6,7 +6,6 @@ import com.online4edu.dependencies.mybatis.generator.util.AutoUtil;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -16,11 +15,6 @@ import java.util.List;
  * @date 2021/03/30 21:41
  */
 public class ServiceGenerator implements Generator {
-
-    @Override
-    public void fileGenerator(TableSign tableSign) {
-        fileGenerator(Collections.singletonList(tableSign));
-    }
 
     @Override
     public void fileGenerator(List<TableSign> tableSignList) {
@@ -37,12 +31,13 @@ public class ServiceGenerator implements Generator {
                 System.out.println(tableSign.getDomainName() + "Service.java 生成成功");
 
                 // 生成 ServiceImpl.java
-                File serviceImpl = new File(servicePath + "ServiceImpl.java");
-                if (!serviceImpl.getParentFile().exists()) {
-                    serviceImpl.getParentFile().mkdirs();
+                String serviceImplPath = instance.getJavaPath() + AutoUtil.packageConvertPath(instance.getPackageServiceImpl()) + tableSign.getDomainName();
+                File serviceImplFile = new File(serviceImplPath + "ServiceImpl.java");
+                if (!serviceImplFile.getParentFile().exists()) {
+                    serviceImplFile.getParentFile().mkdirs();
                 }
 
-                AutoUtil.ftlConfiguration().getTemplate("service-impl.ftl").process(tableSign, new FileWriter(serviceImpl));
+                AutoUtil.ftlConfiguration().getTemplate("service-impl.ftl").process(tableSign, new FileWriter(serviceImplFile));
                 System.out.println(tableSign.getDomainName() + "ServiceImpl.java 生成成功");
             }
         } catch (Exception var14) {

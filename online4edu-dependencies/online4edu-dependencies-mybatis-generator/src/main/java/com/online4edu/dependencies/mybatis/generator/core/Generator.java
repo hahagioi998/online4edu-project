@@ -15,13 +15,6 @@ public interface Generator {
     /**
      * 生成具体文件
      *
-     * @param tableSign 数据表签名
-     */
-    void fileGenerator(TableSign tableSign);
-
-    /**
-     * 生成具体文件
-     *
      * @param tableSignList 数据表签名
      */
     void fileGenerator(List<TableSign> tableSignList);

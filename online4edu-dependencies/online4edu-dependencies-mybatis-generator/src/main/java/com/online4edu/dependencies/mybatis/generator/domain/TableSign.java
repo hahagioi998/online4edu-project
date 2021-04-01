@@ -58,7 +58,13 @@ public class TableSign {
 
     public String getDomainName() {
         if (StringUtils.isEmpty(domainName)) {
-            domainName = AutoUtil.tableNameConvertUpperCamel(tableName);
+            String stripPrefix = ProjectProperties.getInstance().getStripPrefix();
+            if (StringUtils.isNotBlank(stripPrefix) && tableName.startsWith(stripPrefix)) {
+                domainName = tableName.substring(stripPrefix.length() - 1);
+                domainName = AutoUtil.tableNameConvertUpperCamel(domainName);
+            } else {
+                domainName = AutoUtil.tableNameConvertUpperCamel(tableName);
+            }
         }
         return domainName;
     }

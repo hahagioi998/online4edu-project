@@ -22,6 +22,15 @@ public class CodeGeneratorUtil {
     public CodeGeneratorUtil() {
     }
 
+    public static void create(String[][] tableNameArr, String author, String jdbcUrl, String projectPath, String projectPackage) {
+        create(tableNameArr, author, jdbcUrl, "root", "root", projectPath, projectPackage);
+    }
+
+    public static void create(String[][] tableNameArr, String author, String jdbcUrl,
+                              String jdbcUser, String jdbcPwd, String projectPath, String projectPackage) {
+        create(tableNameArr, author, jdbcUrl, jdbcUser, jdbcPwd, projectPath, projectPackage, null);
+    }
+
     /**
      * @param tableNameArr   数据表二维数组
      *                       e.g:{{"tableName", "domainName", "description", "pk","pkDataType"}}
@@ -108,12 +117,12 @@ public class CodeGeneratorUtil {
             }
             tableSignList.add(tableSign);
         }
-        
-        generatorBySpi(tableSignList);
+
+        doGenerator(tableSignList);
     }
 
 
-    private static void generatorBySpi(List<TableSign> tableSignList) {
+    private static void doGenerator(List<TableSign> tableSignList) {
         ServiceLoader<Generator> serviceLoader = ServiceLoader.load(Generator.class, CodeGeneratorUtil.class.getClassLoader());
         serviceLoader.forEach(o -> o.fileGenerator(tableSignList));
     }

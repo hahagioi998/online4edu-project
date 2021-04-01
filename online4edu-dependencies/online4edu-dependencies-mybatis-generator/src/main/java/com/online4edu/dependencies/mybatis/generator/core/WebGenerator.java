@@ -6,7 +6,6 @@ import com.online4edu.dependencies.mybatis.generator.util.AutoUtil;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -16,11 +15,6 @@ import java.util.List;
  * @date 2021/03/30 21:41
  */
 public class WebGenerator implements Generator {
-
-    @Override
-    public void fileGenerator(TableSign tableSign) {
-        fileGenerator(Collections.singletonList(tableSign));
-    }
 
     @Override
     public void fileGenerator(List<TableSign> tableSignList) {
