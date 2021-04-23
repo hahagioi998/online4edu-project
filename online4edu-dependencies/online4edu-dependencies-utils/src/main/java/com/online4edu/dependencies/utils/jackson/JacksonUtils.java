@@ -10,8 +10,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.online4edu.dependencies.utils.exception.EduDeserializationException;
-import com.online4edu.dependencies.utils.exception.EduSerializationException;
+import com.online4edu.dependencies.utils.exception.DeserializationException;
+import com.online4edu.dependencies.utils.exception.SerializationException;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
@@ -38,13 +38,13 @@ public final class JacksonUtils {
      *
      * @param obj obj
      * @return json string
-     * @throws EduSerializationException if transfer failed
+     * @throws SerializationException if transfer failed
      */
     public static String toJson(Object obj) {
         try {
             return mapper.writeValueAsString(obj);
         } catch (JsonProcessingException e) {
-            throw new EduSerializationException(obj.getClass(), e);
+            throw new SerializationException(obj.getClass(), e);
         }
     }
 
@@ -53,7 +53,7 @@ public final class JacksonUtils {
      *
      * @param obj obj
      * @return json string byte array
-     * @throws EduSerializationException if transfer failed
+     * @throws SerializationException if transfer failed
      */
     public static byte[] toJsonBytes(Object obj) {
         try {
@@ -63,7 +63,7 @@ public final class JacksonUtils {
             }
             return new byte[0];
         } catch (JsonProcessingException e) {
-            throw new EduSerializationException(obj.getClass(), e);
+            throw new SerializationException(obj.getClass(), e);
         }
     }
 
@@ -74,14 +74,14 @@ public final class JacksonUtils {
      * @param clazz class of object
      * @param <T>   General type
      * @return object
-     * @throws EduDeserializationException if deserialize failed
+     * @throws DeserializationException if deserialize failed
      */
     public static <T> T toObj(byte[] json, Class<T> clazz) {
         try {
             return toObj(new String(json, StandardCharsets.UTF_8), clazz);
         } catch (Exception e) {
 
-            throw new EduDeserializationException(clazz, e);
+            throw new DeserializationException(clazz, e);
         }
     }
 
@@ -92,13 +92,13 @@ public final class JacksonUtils {
      * @param clazz {@link Type} of object
      * @param <T>   General type
      * @return object
-     * @throws EduDeserializationException if deserialize failed
+     * @throws DeserializationException if deserialize failed
      */
     public static <T> T toObj(byte[] json, Type clazz) {
         try {
             return toObj(new String(json, StandardCharsets.UTF_8), clazz);
         } catch (Exception e) {
-            throw new EduDeserializationException(e);
+            throw new DeserializationException(e);
         }
     }
 
@@ -109,13 +109,13 @@ public final class JacksonUtils {
      * @param clazz       class of object
      * @param <T>         General type
      * @return object
-     * @throws EduDeserializationException if deserialize failed
+     * @throws DeserializationException if deserialize failed
      */
     public static <T> T toObj(InputStream inputStream, Class<T> clazz) {
         try {
             return mapper.readValue(inputStream, clazz);
         } catch (IOException e) {
-            throw new EduDeserializationException(e);
+            throw new DeserializationException(e);
         }
     }
 
@@ -126,13 +126,13 @@ public final class JacksonUtils {
      * @param typeReference {@link TypeReference} of object
      * @param <T>           General type
      * @return object
-     * @throws EduDeserializationException if deserialize failed
+     * @throws DeserializationException if deserialize failed
      */
     public static <T> T toObj(byte[] json, TypeReference<T> typeReference) {
         try {
             return toObj(new String(json, StandardCharsets.UTF_8), typeReference);
         } catch (Exception e) {
-            throw new EduDeserializationException(e);
+            throw new DeserializationException(e);
         }
     }
 
@@ -143,13 +143,13 @@ public final class JacksonUtils {
      * @param clazz class of object
      * @param <T>   General type
      * @return object
-     * @throws EduDeserializationException if deserialize failed
+     * @throws DeserializationException if deserialize failed
      */
     public static <T> T toObj(String json, Class<T> clazz) {
         try {
             return mapper.readValue(json, clazz);
         } catch (IOException e) {
-            throw new EduDeserializationException(clazz, e);
+            throw new DeserializationException(clazz, e);
         }
     }
 
@@ -160,13 +160,13 @@ public final class JacksonUtils {
      * @param type {@link Type} of object
      * @param <T>  General type
      * @return object
-     * @throws EduDeserializationException if deserialize failed
+     * @throws DeserializationException if deserialize failed
      */
     public static <T> T toObj(String json, Type type) {
         try {
             return mapper.readValue(json, mapper.constructType(type));
         } catch (IOException e) {
-            throw new EduDeserializationException(e);
+            throw new DeserializationException(e);
         }
     }
 
@@ -177,13 +177,13 @@ public final class JacksonUtils {
      * @param typeReference {@link TypeReference} of object
      * @param <T>           General type
      * @return object
-     * @throws EduDeserializationException if deserialize failed
+     * @throws DeserializationException if deserialize failed
      */
     public static <T> T toObj(String json, TypeReference<T> typeReference) {
         try {
             return mapper.readValue(json, typeReference);
         } catch (IOException e) {
-            throw new EduDeserializationException(typeReference.getClass(), e);
+            throw new DeserializationException(typeReference.getClass(), e);
         }
     }
 
@@ -194,13 +194,13 @@ public final class JacksonUtils {
      * @param type        {@link Type} of object
      * @param <T>         General type
      * @return object
-     * @throws EduDeserializationException if deserialize failed
+     * @throws DeserializationException if deserialize failed
      */
     public static <T> T toObj(InputStream inputStream, Type type) {
         try {
             return mapper.readValue(inputStream, mapper.constructType(type));
         } catch (IOException e) {
-            throw new EduDeserializationException(type, e);
+            throw new DeserializationException(type, e);
         }
     }
 
@@ -209,13 +209,13 @@ public final class JacksonUtils {
      *
      * @param json json string
      * @return {@link JsonNode}
-     * @throws EduDeserializationException if deserialize failed
+     * @throws DeserializationException if deserialize failed
      */
     public static JsonNode toObj(String json) {
         try {
             return mapper.readTree(json);
         } catch (IOException e) {
-            throw new EduDeserializationException(e);
+            throw new DeserializationException(e);
         }
     }
 

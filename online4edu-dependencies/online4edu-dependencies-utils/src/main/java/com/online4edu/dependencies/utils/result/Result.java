@@ -4,6 +4,7 @@ import com.online4edu.dependencies.utils.jackson.JacksonUtils;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * 统一返回结果类
@@ -13,6 +14,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@ToString
 @EqualsAndHashCode
 public class Result<T> {
 
@@ -32,10 +34,5 @@ public class Result<T> {
 
     public String toJson() {
         return JacksonUtils.toJson(this);
-    }
-
-    @Override
-    public String toString() {
-        return "{code=" + this.code + ", message=\'" + this.message + '\'' + ", data=" + this.data + '}';
     }
 }

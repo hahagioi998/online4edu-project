@@ -1,5 +1,7 @@
 package com.online4edu.dependencies.utils.result;
 
+import com.online4edu.dependencies.utils.exception.SingletonCreationException;
+
 /**
  * 消息统一响应工具类
  *
@@ -9,15 +11,16 @@ package com.online4edu.dependencies.utils.result;
 public class ResponseMsgUtil {
 
     private ResponseMsgUtil() {
+        throw new SingletonCreationException("消息统一响应工具类[ResponseMsgUtil]不允许实例化");
     }
 
     /**
      * 统一返回结果
      */
-    public static <T> Result<T> builderResponse(int code, String msg, T data) {
+    private static <T> Result<T> builderResponse(int code, String message, T data) {
         Result<T> result = new Result<>();
         result.setCode(code);
-        result.setMessage(msg);
+        result.setMessage(message);
         result.setData(data);
         return result;
     }
@@ -27,14 +30,18 @@ public class ResponseMsgUtil {
      * 请求失败
      */
     public static <T> Result<T> failure() {
-        return failure(StatusEnum.FAILURE.message());
+        return failure(BasicErrorCode.FAILURE);
+    }
+
+    public static <T> Result<T> failure(String message) {
+        return builderResponse(BasicErrorCode.FAILURE.code(), message, null);
     }
 
     /**
-     * 请求失败
+     * 扩展使用
      */
-    public static <T> Result<T> failure(String msg) {
-        return builderResponse(StatusEnum.FAILURE.code(), msg, null);
+    public static <T> Result<T> failure(ErrorCode errorCode) {
+        return builderResponse(errorCode.code(), errorCode.message(), null);
     }
 
 
@@ -42,105 +49,79 @@ public class ResponseMsgUtil {
      * 请求成功
      */
     public static <T> Result<T> success() {
-        return success(StatusEnum.SUCCESS.message(), null);
+        return success(BasicErrorCode.SUCCESS.message());
     }
 
-    /**
-     * 请求成功
-     */
-    public static <T> Result<T> success(String msg) {
-        return success(msg, null);
+    public static <T> Result<T> success(String message) {
+        return success(message, null);
     }
 
-    /**
-     * 请求成功
-     */
     public static <T> Result<T> success(T data) {
-        return success(StatusEnum.SUCCESS.message(), data);
+        return success(BasicErrorCode.SUCCESS.message(), data);
     }
 
+    public static <T> Result<T> success(String message, T data) {
+        return builderResponse(BasicErrorCode.SUCCESS.code(), message, data);
+    }
+
+
     /**
-     * 请求成功
+     * 请求参数不能为空
+     * PARAMS_CANT_NOT_EMPTY
      */
-    public static <T> Result<T> success(String msg, T data) {
-        return builderResponse(StatusEnum.SUCCESS.code(), msg, data);
+    public static <T> Result<T> paramsCantNotEmpty() {
+        return paramsCantNotEmpty(BasicErrorCode.PARAMS_CANT_NOT_EMPTY.message());
     }
 
+    public static <T> Result<T> paramsCantNotEmpty(String message) {
+        return builderResponse(BasicErrorCode.PARAMS_CANT_NOT_EMPTY.code(), message, null);
+    }
+
+
     /**
-     * 无效请求
+     * 4xx 无效请求
      */
     public static <T> Result<T> illegalRequest() {
-        return illegalRequest(StatusEnum.ILLEGAL_REQUEST.message());
+        return illegalRequest(BasicErrorCode.ILLEGAL_REQUEST.message());
     }
 
-    /**
-     * 无效请求
-     */
-    public static <T> Result<T> illegalRequest(String msg) {
-        return builderResponse(StatusEnum.ILLEGAL_REQUEST.code(), msg, null);
-    }
-
-    /**
-     * 未登录
-     */
-    public static <T> Result<T> notLogin() {
-        return notLogin(StatusEnum.NOT_LOGIN.message());
-    }
-
-    /**
-     * 未登录
-     */
-    public static <T> Result<T> notLogin(String meg) {
-        return builderResponse(StatusEnum.NOT_LOGIN.code(), meg, null);
-    }
-
-    /**
-     * 登录用户名或密码错误
-     */
-    public static <T> Result<T> loginUserOrPasswordError() {
-        return builderResponse(StatusEnum.USER_OR_PASSWORD_ERROR.code(), StatusEnum.USER_OR_PASSWORD_ERROR.message(), null);
+    public static <T> Result<T> illegalRequest(String message) {
+        return builderResponse(BasicErrorCode.ILLEGAL_REQUEST.code(), message, null);
     }
 
 
     /**
-     * 密码错误次数已达上限
-     */
-    public static <T> Result<T> passwordErrorLimit() {
-        return builderResponse(StatusEnum.PASSWORD_ERROR_LIMIT.code(), StatusEnum.PASSWORD_ERROR_LIMIT.message(), null);
-    }
-
-    /**
-     * 无操作权限
-     */
-    public static <T> Result<T> noAuthorized() {
-        return noAuthorized(StatusEnum.NO_AUTHORIZED.message());
-    }
-
-    /**
-     * 无操作权限
-     */
-    public static <T> Result<T> noAuthorized(String msg) {
-        return builderResponse(StatusEnum.NO_AUTHORIZED.code(), msg, null);
-    }
-
-    /**
-     * 500 错误
+     * 5xx 错误
      */
     public static <T> Result<T> internalServerErr() {
-        return internalServerErr(StatusEnum.INTERNAL_SERVER_ERR.message());
+        return internalServerErr(BasicErrorCode.INTERNAL_SERVER_ERR.message());
     }
 
-    /**
-     * 500 错误
-     */
-    public static <T> Result<T> internalServerErr(String msg) {
-        return builderResponse(StatusEnum.INTERNAL_SERVER_ERR.code(), msg, null);
+    public static <T> Result<T> internalServerErr(String message) {
+        return builderResponse(BasicErrorCode.INTERNAL_SERVER_ERR.code(), message, null);
     }
+
 
     /**
      * 业务异常
      */
     public static <T> Result<T> serviceException() {
-        return builderResponse(StatusEnum.SERVICE_EXCEPTION.code(), StatusEnum.SERVICE_EXCEPTION.message(), null);
+        return serviceException(BasicErrorCode.SERVICE_EXCEPTION.message());
+    }
+
+    public static <T> Result<T> serviceException(String message) {
+        return builderResponse(BasicErrorCode.SERVICE_EXCEPTION.code(), message, null);
+    }
+
+
+    /**
+     * 无操作权限
+     */
+    public static <T> Result<T> noAuthorized() {
+        return serviceException(BasicErrorCode.NO_AUTHORIZED.message());
+    }
+
+    public static <T> Result<T> noAuthorized(String message) {
+        return builderResponse(BasicErrorCode.NO_AUTHORIZED.code(), message, null);
     }
 }
