@@ -1,10 +1,7 @@
 package com.online4edu.dependencies.utils.result;
 
 import com.online4edu.dependencies.utils.jackson.JacksonUtils;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 /**
  * 统一返回结果类
@@ -16,6 +13,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @EqualsAndHashCode
+@NoArgsConstructor
 public class Result<T> {
 
     /** 响应码 */
@@ -28,9 +26,6 @@ public class Result<T> {
      * 数据
      */
     private T data;
-
-    public Result() {
-    }
 
     public String toJson() {
         return JacksonUtils.toJson(this);
