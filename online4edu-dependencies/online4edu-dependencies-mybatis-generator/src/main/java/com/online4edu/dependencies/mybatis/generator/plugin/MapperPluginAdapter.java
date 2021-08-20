@@ -25,7 +25,7 @@ public class MapperPluginAdapter extends PluginAdapter {
 
     private boolean caseSensitive;
 
-    private final Set<String> mappers = new HashSet<String>();
+    private final Set<String> mappers = new HashSet<>();
 
     /**
      * 开始的分隔符,例如mysql为`,sqlServer为[
@@ -67,20 +67,24 @@ public class MapperPluginAdapter extends PluginAdapter {
         } else {
             throw new MapperException("Mapper插件缺少必要的mappers属性!");
         }
+
         String caseSensitive = this.properties.getProperty("caseSensitive");
         if (StringUtility.stringHasValue(caseSensitive)) {
             this.caseSensitive = "TRUE".equalsIgnoreCase(caseSensitive);
         }
+
         String beginningDelimiter = this.properties.getProperty("beginningDelimiter");
         if (StringUtility.stringHasValue(beginningDelimiter)) {
             this.beginningDelimiter = beginningDelimiter;
         }
         commentCfg.addProperty("beginningDelimiter", this.beginningDelimiter);
+
         String endingDelimiter = this.properties.getProperty("endingDelimiter");
         if (StringUtility.stringHasValue(endingDelimiter)) {
             this.endingDelimiter = endingDelimiter;
         }
         commentCfg.addProperty("endingDelimiter", this.endingDelimiter);
+
         String schema = this.properties.getProperty("schema");
         if (StringUtility.stringHasValue(schema)) {
             this.schema = schema;
@@ -120,7 +124,7 @@ public class MapperPluginAdapter extends PluginAdapter {
         String pkType = pkFullyQualifiedJavaType.getShortName();
         // String packageName = pkFullyQualifiedJavaType.getPackageName();
 
-        //import接口
+        /// import接口
         for (String mapperRefer : mappers) {
             if (ProjectProperties.BASE_MAPPER_INTERFACE.equals(mapperRefer)) {
 

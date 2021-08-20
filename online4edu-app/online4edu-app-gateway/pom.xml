@@ -8,7 +8,7 @@
     <parent>
         <artifactId>online4edu-app</artifactId>
         <groupId>com.online4edu</groupId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.0.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>online4edu-app-gateway</artifactId>
