@@ -11,6 +11,7 @@
 .idea/**/dictionaries
 .idea/**/shelf
 *.iml
+*.ipr
 
 # Generated files
 .idea/**/contentModel.xml
