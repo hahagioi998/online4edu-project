@@ -44,7 +44,7 @@ jobs:
           # github source
           src: 'github/${{ github.repository_owner }}'
           # gitee source
-          dst: 'gitee/${{ secrets.GITEE_ORG_USER }}'
+          dst: 'gitee/${{ secrets.GITEE_USER }}'
 
           dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
           dst_token: ${{ secrets.GITEE_TOKEN }}
