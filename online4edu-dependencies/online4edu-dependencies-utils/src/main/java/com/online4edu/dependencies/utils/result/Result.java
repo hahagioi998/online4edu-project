@@ -1,6 +1,6 @@
 package com.online4edu.dependencies.utils.result;
 
-import com.online4edu.dependencies.utils.jackson.JacksonUtils;
+import com.online4edu.dependencies.utils.jackson.JacksonUtil;
 import lombok.*;
 
 /**
@@ -28,6 +28,6 @@ public class Result<T> {
     private T data;
 
     public String toJson() {
-        return JacksonUtils.toJson(this);
+        return JacksonUtil.toJson(this);
     }
 }

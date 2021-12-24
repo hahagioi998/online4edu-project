@@ -3,13 +3,19 @@ package com.online4edu.dependencies.utils.jackson;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
+import com.online4edu.dependencies.utils.datetime.DateTimePattern;
 import com.online4edu.dependencies.utils.exception.DeserializationException;
 import com.online4edu.dependencies.utils.exception.SerializationException;
 import org.apache.commons.lang3.StringUtils;
@@ -18,19 +24,50 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.TimeZone;
 
 /**
  * Json utils implement by Jackson.
  *
  * @author <a href="mailto:liaochuntao@live.com">liaochuntao</a>
  */
-public final class JacksonUtils {
+public final class JacksonUtil {
 
-    static ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final XmlMapper XML = new XmlMapper();
 
     static {
-        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-        mapper.setSerializationInclusion(Include.NON_NULL);
+        MAPPER.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+
+        // 序列化所有字段
+        MAPPER.setSerializationInclusion(Include.ALWAYS);
+        // 设置时区
+        MAPPER.setTimeZone(TimeZone.getDefault());
+        // 忽略 transient 字段
+        MAPPER.configure(MapperFeature.PROPAGATE_TRANSIENT_MARKER, true);
+        // java.util.Date 日期格式 处理
+        MAPPER.setDateFormat(new SimpleDateFormat(DateTimePattern.DATE_TIME_PATTERN));
+        // java.time.* 日期格式处理
+        configureObjectMapper4Jsr310(MAPPER);
+    }
+
+    /**
+     * Get ObjectMapper Instance
+     */
+    public static ObjectMapper createObjectMapper() {
+        return MAPPER;
+    }
+
+    /**
+     * Get XmlMapper Instance
+     */
+    public static XmlMapper createXmlMapper() {
+        return XML;
     }
 
     /**
@@ -42,7 +79,7 @@ public final class JacksonUtils {
      */
     public static String toJson(Object obj) {
         try {
-            return mapper.writeValueAsString(obj);
+            return MAPPER.writeValueAsString(obj);
         } catch (JsonProcessingException e) {
             throw new SerializationException(obj.getClass(), e);
         }
@@ -57,7 +94,7 @@ public final class JacksonUtils {
      */
     public static byte[] toJsonBytes(Object obj) {
         try {
-            String json = mapper.writeValueAsString(obj);
+            String json = MAPPER.writeValueAsString(obj);
             if (StringUtils.isNotBlank(json)) {
                 return json.getBytes(StandardCharsets.UTF_8);
             }
@@ -113,7 +150,7 @@ public final class JacksonUtils {
      */
     public static <T> T toObj(InputStream inputStream, Class<T> clazz) {
         try {
-            return mapper.readValue(inputStream, clazz);
+            return MAPPER.readValue(inputStream, clazz);
         } catch (IOException e) {
             throw new DeserializationException(e);
         }
@@ -147,7 +184,7 @@ public final class JacksonUtils {
      */
     public static <T> T toObj(String json, Class<T> clazz) {
         try {
-            return mapper.readValue(json, clazz);
+            return MAPPER.readValue(json, clazz);
         } catch (IOException e) {
             throw new DeserializationException(clazz, e);
         }
@@ -164,7 +201,7 @@ public final class JacksonUtils {
      */
     public static <T> T toObj(String json, Type type) {
         try {
-            return mapper.readValue(json, mapper.constructType(type));
+            return MAPPER.readValue(json, MAPPER.constructType(type));
         } catch (IOException e) {
             throw new DeserializationException(e);
         }
@@ -181,7 +218,7 @@ public final class JacksonUtils {
      */
     public static <T> T toObj(String json, TypeReference<T> typeReference) {
         try {
-            return mapper.readValue(json, typeReference);
+            return MAPPER.readValue(json, typeReference);
         } catch (IOException e) {
             throw new DeserializationException(typeReference.getClass(), e);
         }
@@ -198,7 +235,7 @@ public final class JacksonUtils {
      */
     public static <T> T toObj(InputStream inputStream, Type type) {
         try {
-            return mapper.readValue(inputStream, mapper.constructType(type));
+            return MAPPER.readValue(inputStream, MAPPER.constructType(type));
         } catch (IOException e) {
             throw new DeserializationException(type, e);
         }
@@ -213,7 +250,7 @@ public final class JacksonUtils {
      */
     public static JsonNode toObj(String json) {
         try {
-            return mapper.readTree(json);
+            return MAPPER.readTree(json);
         } catch (IOException e) {
             throw new DeserializationException(e);
         }
@@ -226,7 +263,7 @@ public final class JacksonUtils {
      * @param type  type name of child class
      */
     public static void registerSubtype(Class<?> clazz, String type) {
-        mapper.registerSubtypes(new NamedType(clazz, type));
+        MAPPER.registerSubtypes(new NamedType(clazz, type));
     }
 
     /**
@@ -235,7 +272,7 @@ public final class JacksonUtils {
      * @return {@link ObjectNode}
      */
     public static ObjectNode createEmptyJsonNode() {
-        return new ObjectNode(mapper.getNodeFactory());
+        return new ObjectNode(MAPPER.getNodeFactory());
     }
 
     /**
@@ -244,7 +281,7 @@ public final class JacksonUtils {
      * @return {@link ArrayNode}
      */
     public static ArrayNode createEmptyArrayNode() {
-        return new ArrayNode(mapper.getNodeFactory());
+        return new ArrayNode(MAPPER.getNodeFactory());
     }
 
     /**
@@ -254,7 +291,7 @@ public final class JacksonUtils {
      * @return {@link JsonNode}
      */
     public static JsonNode transferToJsonNode(Object obj) {
-        return mapper.valueToTree(obj);
+        return MAPPER.valueToTree(obj);
     }
 
     /**
@@ -264,6 +301,32 @@ public final class JacksonUtils {
      * @return JavaType {@link JavaType}
      */
     public static JavaType constructJavaType(Type type) {
-        return mapper.constructType(type);
+        return MAPPER.constructType(type);
+    }
+
+    /**
+     * 配置 Java8 日期处理格式
+     */
+    private static void configureObjectMapper4Jsr310(ObjectMapper objectMapper) {
+
+        JavaTimeModule javaTimeModule = new JavaTimeModule();
+
+        // LocalTime 序列化和反序列化配置
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern(DateTimePattern.TIME_PATTERN);
+        javaTimeModule.addSerializer(LocalTime.class, new LocalTimeSerializer(timeFormatter));
+        javaTimeModule.addDeserializer(LocalTime.class, new LocalTimeDeserializer(timeFormatter));
+
+        // LocalDate 序列化和反序列化配置
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(DateTimePattern.DATE_PATTERN);
+        javaTimeModule.addSerializer(LocalDate.class, new LocalDateSerializer(dateFormatter));
+        javaTimeModule.addDeserializer(LocalDate.class, new LocalDateDeserializer(dateFormatter));
+
+        // LocalDateTime 序列化和反序列化配置
+        DateTimeFormatter datetimeFormatter = DateTimeFormatter.ofPattern(DateTimePattern.DATE_TIME_PATTERN);
+        javaTimeModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(datetimeFormatter));
+        javaTimeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(datetimeFormatter));
+
+        objectMapper.registerModule(javaTimeModule);
+
     }
 }

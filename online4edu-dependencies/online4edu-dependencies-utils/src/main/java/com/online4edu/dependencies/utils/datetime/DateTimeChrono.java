@@ -12,7 +12,7 @@ import java.time.temporal.*;
  * @author mingrn97 <br > mingrn97@gmail.com
  * @date 2021/01/31 15:43
  */
-public enum DateTimeType {
+public enum DateTimeChrono {
 
     /** 年份 */
     YEAR("Year", "年份", new Chrono() {
@@ -88,6 +88,7 @@ public enum DateTimeType {
             return this;
         }
     }),
+
     ;
 
 
@@ -95,7 +96,7 @@ public enum DateTimeType {
     private final String phrase;
     private final Chrono chrono;
 
-    DateTimeType(String type, String phrase, Chrono chrono) {
+    DateTimeChrono(String type, String phrase, Chrono chrono) {
         this.type = type;
         this.phrase = phrase;
         this.chrono = chrono;
@@ -113,22 +114,24 @@ public enum DateTimeType {
         return chrono;
     }
 
-    public static DateTimeType resolve(String type) {
-        for (DateTimeType dateTimeType : values()) {
-            if (dateTimeType.type.equalsIgnoreCase(type)) {
-                return dateTimeType;
+    public static DateTimeChrono resolve(String type) {
+        for (DateTimeChrono dateTimeChrono : values()) {
+            if (dateTimeChrono.type.equalsIgnoreCase(type)) {
+                return dateTimeChrono;
             }
         }
         return null;
     }
 
     public static String value(String type) {
-        DateTimeType dateTimeType = resolve(type);
-        if (dateTimeType == null) {
+        DateTimeChrono dateTimeChrono = resolve(type);
+        if (dateTimeChrono == null) {
             throw new IllegalArgumentException("No matching constant for [" + type + "]");
         }
-        return dateTimeType.phrase;
+        return dateTimeChrono.phrase;
     }
+
+    // ======================== Chrono Compute ========================
 
     public abstract static class Chrono {
 
@@ -176,13 +179,13 @@ public enum DateTimeType {
          * 计算
          *
          * @param benchmark    指定基准时间
-         * @param dateTimeType 计算日期类型
+         * @param dateTimeChrono 计算日期类型
          */
-        protected void compute(Temporal benchmark, DateTimeType dateTimeType) {
+        protected void compute(Temporal benchmark, DateTimeChrono dateTimeChrono) {
 
             LocalDate date;
             LocalDate last;
-            switch (dateTimeType) {
+            switch (dateTimeChrono) {
                 case YEAR:
                     date = convert2LocalDate(benchmark);
 
