@@ -4,6 +4,12 @@ import org.apache.http.conn.HttpClientConnectionManager;
 
 import java.util.concurrent.TimeUnit;
 
+/**
+ * 监控线程池 {@link HttpClientConnectionManager} 过期及空闲了连接
+ *
+ * @author Shilin <br > mingrn97@gmail.com
+ * @date 2021/12/24 20:44
+ */
 class IdleConnectionMonitorThread extends Thread {
 
     private final HttpClientConnectionManager connMgr;

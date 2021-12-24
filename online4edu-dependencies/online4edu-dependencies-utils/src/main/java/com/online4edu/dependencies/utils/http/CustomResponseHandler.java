@@ -13,6 +13,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * HTTP 响应消息处理
+ *
+ * @author Shilin <br > mingrn97@gmail.com
+ * @date 2021/12/24 20:42
+ */
 class CustomResponseHandler implements ResponseHandler<String> {
 
     private static final Logger logger = Logger.getLogger(CustomResponseHandler.class.getSimpleName());
@@ -24,8 +30,7 @@ class CustomResponseHandler implements ResponseHandler<String> {
      * status code), throws an {@link HttpResponseException}.
      */
     @Override
-    public String handleResponse(final HttpResponse response)
-            throws HttpResponseException, IOException {
+    public String handleResponse(final HttpResponse response) throws IOException {
 
         final StatusLine statusLine = response.getStatusLine();
         final HttpEntity entity = response.getEntity();

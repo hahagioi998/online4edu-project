@@ -7,6 +7,9 @@ import java.util.Map;
 
 /**
  * 自定义请求头
+ *
+ * @author Shilin <br > mingrn97@gmail.com
+ * @date 2021/12/24 20:42
  */
 public class CustomRequestConfig {
 

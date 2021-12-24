@@ -8,13 +8,6 @@ import com.fasterxml.jackson.databind.jsontype.NamedType;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import com.online4edu.dependencies.utils.datetime.DateTimePattern;
 import com.online4edu.dependencies.utils.exception.DeserializationException;
 import com.online4edu.dependencies.utils.exception.SerializationException;
@@ -25,10 +18,6 @@ import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.TimeZone;
 
 /**
@@ -53,7 +42,7 @@ public final class JacksonUtil {
         // java.util.Date 日期格式 处理
         MAPPER.setDateFormat(new SimpleDateFormat(DateTimePattern.DATE_TIME_PATTERN));
         // java.time.* 日期格式处理
-        configureObjectMapper4Jsr310(MAPPER);
+        JacksonConfig.configureObjectMapper4Jsr310(MAPPER);
     }
 
     /**
@@ -302,31 +291,5 @@ public final class JacksonUtil {
      */
     public static JavaType constructJavaType(Type type) {
         return MAPPER.constructType(type);
-    }
-
-    /**
-     * 配置 Java8 日期处理格式
-     */
-    private static void configureObjectMapper4Jsr310(ObjectMapper objectMapper) {
-
-        JavaTimeModule javaTimeModule = new JavaTimeModule();
-
-        // LocalTime 序列化和反序列化配置
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern(DateTimePattern.TIME_PATTERN);
-        javaTimeModule.addSerializer(LocalTime.class, new LocalTimeSerializer(timeFormatter));
-        javaTimeModule.addDeserializer(LocalTime.class, new LocalTimeDeserializer(timeFormatter));
-
-        // LocalDate 序列化和反序列化配置
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(DateTimePattern.DATE_PATTERN);
-        javaTimeModule.addSerializer(LocalDate.class, new LocalDateSerializer(dateFormatter));
-        javaTimeModule.addDeserializer(LocalDate.class, new LocalDateDeserializer(dateFormatter));
-
-        // LocalDateTime 序列化和反序列化配置
-        DateTimeFormatter datetimeFormatter = DateTimeFormatter.ofPattern(DateTimePattern.DATE_TIME_PATTERN);
-        javaTimeModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(datetimeFormatter));
-        javaTimeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(datetimeFormatter));
-
-        objectMapper.registerModule(javaTimeModule);
-
     }
 }

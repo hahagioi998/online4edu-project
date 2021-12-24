@@ -12,6 +12,12 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import java.io.IOException;
 import java.util.Map;
 
+/**
+ * 客户端工具
+ *
+ * @author Shilin <br > mingrn97@gmail.com
+ * @date 2021/12/24 20:43
+ */
 public class HttpClientUtil {
 
     private static volatile boolean init = false;
