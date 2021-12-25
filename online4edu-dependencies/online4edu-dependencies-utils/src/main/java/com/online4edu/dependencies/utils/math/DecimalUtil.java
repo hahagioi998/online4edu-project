@@ -1,4 +1,4 @@
-package com.online4edu.dependencies.utils;
+package com.online4edu.dependencies.utils.math;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
