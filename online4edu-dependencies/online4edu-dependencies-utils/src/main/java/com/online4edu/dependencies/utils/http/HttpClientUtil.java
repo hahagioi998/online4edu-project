@@ -12,14 +12,10 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 /**
  * 客户端工具
@@ -28,6 +24,9 @@ import java.util.function.Consumer;
  * @date 2021/12/24 20:43
  */
 public class HttpClientUtil {
+
+    private HttpClientUtil() {
+    }
 
     private static volatile boolean init = false;
 
@@ -91,6 +90,9 @@ public class HttpClientUtil {
         init = true;
     }
 
+    /**
+     * Get Request
+     */
     public static String requestGet(String url) {
         return requestGet(url, null);
     }
@@ -105,6 +107,9 @@ public class HttpClientUtil {
         return doRequest(url, httpGet, customRequestConfig);
     }
 
+    /**
+     * Post for application/x-www-form-urlencoded
+     */
     public static String requestPostForm(String url, Map<String, Object> params) {
         return requestPostForm(url, params, HttpWrapper.createCustomRequestConfig(0));
     }
@@ -114,6 +119,9 @@ public class HttpClientUtil {
         return doRequest(url, httpPost, customRequestConfig);
     }
 
+    /**
+     * Post for application/json
+     */
     public static String requestPostJson(String url, String json) {
         return requestPostJson(url, json, HttpWrapper.createCustomRequestConfig(0));
     }
@@ -132,6 +140,9 @@ public class HttpClientUtil {
         return doRequest(url, httpPost, customRequestConfig);
     }
 
+    /**
+     * Post for application/xml
+     */
     public static String requestPostXml(String url, String xml) {
         return requestPostXml(url, xml, HttpWrapper.createCustomRequestConfig(0));
     }
@@ -151,6 +162,9 @@ public class HttpClientUtil {
     }
 
 
+    /**
+     * File upload
+     */
     public static String requestPostFile(String url, File file) {
         return requestPostFile(url, file, HttpWrapper.createCustomRequestConfig(0));
     }
@@ -241,31 +255,41 @@ public class HttpClientUtil {
         return doRequest(url, httpPost, customRequestConfig);
     }
 
-    public static void requestDownloadFile(String url, String writeName) {
-        requestDownloadFile(url, writeName, HttpWrapper.createCustomRequestConfig(0));
+    /**
+     * file download
+     *
+     * @param url          Network file protocol address
+     * @param outputStream Write out
+     */
+    public static void requestDownloadFile(String url, OutputStream outputStream) {
+        requestDownloadFile(url, outputStream, HttpWrapper.createCustomRequestConfig(0));
     }
 
-    public static void requestDownloadFile(String url, String writeName, CustomRequestConfig customRequestConfig) {
-        requestDownloadFile(Collections.singletonList(url), writeName, HttpWrapper.createCustomRequestConfig(0));
+    public static void requestDownloadFile(String url, OutputStream outputStream, CustomRequestConfig customRequestConfig) {
+        requestDownloadFile(Collections.singletonList(url), outputStream, HttpWrapper.createCustomRequestConfig(0));
     }
 
-    public static void requestDownloadFile(List<String> urlList, String writeName) {
-        requestDownloadFile(urlList, writeName, HttpWrapper.createCustomRequestConfig(0));
+    /**
+     * Incorporating multiple files into one file.
+     * <p>
+     * Does not guarantee that merge order, if you want to merge in
+     * sequence the use which has the function of sorting collection
+     * storage download link.
+     *
+     * @param urlList      Network file protocol address List
+     * @param outputStream Write out
+     */
+    public static void requestDownloadFile(Collection<String> urlList, OutputStream outputStream) {
+        requestDownloadFile(urlList, outputStream, HttpWrapper.createCustomRequestConfig(0));
     }
 
-    public static void requestDownloadFile(List<String> urlList, String writeName, CustomRequestConfig customRequestConfig) {
+    public static void requestDownloadFile(Collection<String> urlList, OutputStream outputStream, CustomRequestConfig customRequestConfig) {
         if (CollectionUtils.isEmpty(urlList)) {
             throw new HttpException("the file url is empty");
         }
 
-        createDownloadPath(writeName);
-
-        try (FileOutputStream outputStream = new FileOutputStream(writeName)) {
-            for (String url : urlList) {
-                doDownload(url, outputStream, customRequestConfig);
-            }
-        } catch (IOException e) {
-            throw new HttpException(e);
+        for (String url : urlList) {
+            doDownload(url, customRequestConfig, outputStream);
         }
     }
 
@@ -276,7 +300,7 @@ public class HttpClientUtil {
             }
             // Merge Custom Request Config
             HttpWrapper.mergeCustomRequestConfig(httpRequestBase, customRequestConfig, defaultRequestConfig);
-            return httpClient.execute(HttpHost.create(url), httpRequestBase, new TxtResponseHandler());
+            return httpClient.execute(HttpHost.create(url), httpRequestBase, new PlainTxtResponseHandler());
         } catch (IOException e) {
             throw new HttpException(e);
         } finally {
@@ -284,7 +308,7 @@ public class HttpClientUtil {
         }
     }
 
-    public static void doRequest(String url, CustomRequestConfig customRequestConfig, Consumer<InputStream> consumer) {
+    public static void doDownload(String url, CustomRequestConfig customRequestConfig, OutputStream outputStream) {
 
         HttpGet httpGet = new HttpGet(url);
         try {
@@ -293,8 +317,7 @@ public class HttpClientUtil {
             }
             // Merge Custom Request Config
             HttpWrapper.mergeCustomRequestConfig(httpGet, customRequestConfig, defaultRequestConfig);
-            InputStream inputStream = httpClient.execute(HttpHost.create(url), httpGet, new InputStreamResponseHandler());
-            consumer.accept(inputStream);
+            httpClient.execute(httpGet, new DownloadResponseHandler(outputStream));
         } catch (IOException e) {
             throw new HttpException(e);
         } finally {
@@ -302,22 +325,7 @@ public class HttpClientUtil {
         }
     }
 
-
-    public static void doDownload(String url, FileOutputStream outputStream, CustomRequestConfig customRequestConfig) {
-        doRequest(url, customRequestConfig, inputStream -> {
-            try {
-                int length;
-                byte[] tmp = new byte[1024];
-                while ((length = inputStream.read(tmp)) != -1) {
-                    outputStream.write(tmp, 0, length);
-                }
-            } catch (IOException e) {
-                throw new HttpException("write file exception", e);
-            }
-        });
-    }
-
-    private static void createDownloadPath(String downloadPath) {
+    public static void createDownloadPath(String downloadPath) {
         try {
             File file = new File(downloadPath);
             if (file.exists()) {
@@ -332,12 +340,4 @@ public class HttpClientUtil {
             throw new HttpException(String.format("cannot create dir %s", downloadPath), e);
         }
     }
-
-    public static void main(String[] args) {
-
-        System.out.println(requestGet("http://baidu.com"));
-
-        requestDownloadFile("http://git-media.knowledge.ituknown.cn/%E4%B8%AD%E6%96%87%E4%B9%B1%E7%A0%81/git-status%20%E4%B9%B1%E7%A0%81-1639887120rGTyu1GBhT.png", "/Users/mingrn97/Desktop/down/1.mp4");
-    }
-
 }

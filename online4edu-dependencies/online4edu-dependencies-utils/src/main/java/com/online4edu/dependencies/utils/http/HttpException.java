@@ -1,7 +1,7 @@
 package com.online4edu.dependencies.utils.http;
 
 /**
- * 异常
+ * Custom Http Client Exception
  *
  * @author Shilin <br > mingrn97@gmail.com
  * @date 2021/12/24 20:43

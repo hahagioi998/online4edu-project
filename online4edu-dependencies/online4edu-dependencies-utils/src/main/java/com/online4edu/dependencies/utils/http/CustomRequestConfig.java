@@ -6,10 +6,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 自定义请求头
+ * Custom Http CLient Request Config
  *
  * @author Shilin <br > mingrn97@gmail.com
  * @date 2021/12/24 20:42
+ * @see org.apache.http.client.config.RequestConfig.Builder
  */
 public class CustomRequestConfig {
 

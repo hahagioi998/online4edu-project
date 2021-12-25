@@ -40,6 +40,9 @@ import java.util.Map;
  */
 class HttpWrapper {
 
+    private HttpWrapper() {
+    }
+
     static final List<Class<?>> ALLOW_FILE_CONTENT_TYPE = new ArrayList<>();
 
     static {
@@ -261,9 +264,7 @@ class HttpWrapper {
         }
 
         for (Map.Entry<String, Object> entry : params.entrySet()) {
-
             pairList.add(new BasicNameValuePair(entry.getKey(), writeValueAsString(entry.getKey(), entry.getValue())));
-
         }
 
         return pairList;

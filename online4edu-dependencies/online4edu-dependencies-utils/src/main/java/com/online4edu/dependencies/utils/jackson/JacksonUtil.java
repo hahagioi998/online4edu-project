@@ -331,7 +331,7 @@ public final class JacksonUtil {
      * @return object
      * @throws DeserializationException if deserialize failed
      */
-    public static <T> T xml2Obj(byte[] xml, Type clazz) {
+    public static <T> T xml2obj(byte[] xml, Type clazz) {
         try {
             return xml2obj(new String(xml, StandardCharsets.UTF_8), clazz);
         } catch (Exception e) {
