@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Custom Http CLient Request Config
+ * Custom Http Client Request Config
  *
  * @author Shilin <br > mingrn97@gmail.com
  * @date 2021/12/24 20:42
