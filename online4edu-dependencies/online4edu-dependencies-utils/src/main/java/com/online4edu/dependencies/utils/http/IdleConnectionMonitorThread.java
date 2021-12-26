@@ -5,15 +5,15 @@ import org.apache.http.conn.HttpClientConnectionManager;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 监控线程池 {@link HttpClientConnectionManager} 过期及空闲了连接
+ * 监控线程池 {@link HttpClientConnectionManager} 过期及空闲的连接
  *
  * @author Shilin <br > mingrn97@gmail.com
  * @date 2021/12/24 20:44
  */
 class IdleConnectionMonitorThread extends Thread {
 
-    private final HttpClientConnectionManager connMgr;
     private volatile boolean shutdown;
+    private final HttpClientConnectionManager connMgr;
 
     public IdleConnectionMonitorThread(HttpClientConnectionManager connMgr) {
         super();
@@ -25,7 +25,7 @@ class IdleConnectionMonitorThread extends Thread {
         try {
             while (!shutdown) {
                 synchronized (this) {
-                    wait(5000);
+                    wait(3000);
                     // Close expired connections
                     connMgr.closeExpiredConnections();
                     // Optionally, close connections

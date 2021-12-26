@@ -12,10 +12,16 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 客户端工具
@@ -33,6 +39,15 @@ public class HttpClientUtil {
     private static RequestConfig defaultRequestConfig;
 
     private static CloseableHttpClient httpClient;
+
+    /**
+     * 监控线程, 对异常和空闲线程进行关闭
+     * <p>
+     * 每 30s 运行一次
+     */
+    private static final ScheduledThreadPoolExecutor taskScheduler = new ScheduledThreadPoolExecutor(1,
+            new DefaultThreadFactory("clean-stale-httpclient-"), new ThreadPoolExecutor.CallerRunsPolicy());
+
 
     /**
      * 从连接池获取连接的超时时间
@@ -62,7 +77,7 @@ public class HttpClientUtil {
     /**
      * 定时清理陈旧线程周期
      */
-    public static final int VALIDATE_AFTER_INACTIVITY = 60000;
+    public static final int STALE_CONNECTION_CHECK = 30;
 
     public static synchronized void init(int connectionRequestTimeout, int connectTimeout, int socketTimeout) {
 
@@ -72,7 +87,7 @@ public class HttpClientUtil {
 
         // 连接池
         PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
-        connectionManager.setValidateAfterInactivity(VALIDATE_AFTER_INACTIVITY);
+        //connectionManager.setValidateAfterInactivity(STALE_CONNECTION_CHECK);
         connectionManager.setDefaultMaxPerRoute(DEFAULT_MAX_PER_ROUTE);
         connectionManager.setMaxTotal(MAX_TOTAL);
 
@@ -80,12 +95,19 @@ public class HttpClientUtil {
                 .setConnectionRequestTimeout(connectionRequestTimeout)
                 .setConnectTimeout(connectTimeout)
                 .setSocketTimeout(socketTimeout)
+                //.setStaleConnectionCheckEnabled()
                 .build();
 
         httpClient = HttpClientBuilder.create()
                 .setConnectionManager(connectionManager)
                 .setDefaultRequestConfig(defaultRequestConfig)
                 .build();
+
+
+        // 异常连接线程监控
+        taskScheduler.scheduleAtFixedRate(
+                new IdleConnectionMonitorThread(connectionManager),
+                STALE_CONNECTION_CHECK, STALE_CONNECTION_CHECK, TimeUnit.SECONDS);
 
         init = true;
     }
