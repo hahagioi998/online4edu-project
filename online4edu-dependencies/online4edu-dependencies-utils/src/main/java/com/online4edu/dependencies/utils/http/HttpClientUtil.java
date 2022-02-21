@@ -2,7 +2,6 @@ package com.online4edu.dependencies.utils.http;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
-import org.apache.http.HttpHost;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -126,7 +125,7 @@ public class HttpClientUtil {
     public static String requestGet(String url, Map<String, Object> params, CustomRequestConfig customRequestConfig) {
 
         HttpGet httpGet = HttpWrapper.createGet(url, params);
-        return doRequest(url, httpGet, customRequestConfig);
+        return doRequest(httpGet, customRequestConfig);
     }
 
     /**
@@ -138,7 +137,7 @@ public class HttpClientUtil {
 
     public static String requestPostForm(String url, Map<String, Object> params, CustomRequestConfig customRequestConfig) {
         HttpPost httpPost = HttpWrapper.createPostForm(url, params);
-        return doRequest(url, httpPost, customRequestConfig);
+        return doRequest(httpPost, customRequestConfig);
     }
 
     /**
@@ -150,7 +149,7 @@ public class HttpClientUtil {
 
     public static String requestPostJson(String url, String json, CustomRequestConfig customRequestConfig) {
         HttpPost httpPost = HttpWrapper.createPostJson(url, json);
-        return doRequest(url, httpPost, customRequestConfig);
+        return doRequest(httpPost, customRequestConfig);
     }
 
     public static String requestPostJson(String url, Object obj) {
@@ -159,7 +158,7 @@ public class HttpClientUtil {
 
     public static String requestPostJson(String url, Object obj, CustomRequestConfig customRequestConfig) {
         HttpPost httpPost = HttpWrapper.createPostJson(url, obj);
-        return doRequest(url, httpPost, customRequestConfig);
+        return doRequest(httpPost, customRequestConfig);
     }
 
     /**
@@ -171,7 +170,7 @@ public class HttpClientUtil {
 
     public static String requestPostXml(String url, String xml, CustomRequestConfig customRequestConfig) {
         HttpPost httpPost = HttpWrapper.createPostXml(url, xml);
-        return doRequest(url, httpPost, customRequestConfig);
+        return doRequest(httpPost, customRequestConfig);
     }
 
     public static String requestPostXml(String url, Object obj) {
@@ -180,7 +179,7 @@ public class HttpClientUtil {
 
     public static String requestPostXml(String url, Object obj, CustomRequestConfig customRequestConfig) {
         HttpPost httpPost = HttpWrapper.createPostXml(url, obj);
-        return doRequest(url, httpPost, customRequestConfig);
+        return doRequest(httpPost, customRequestConfig);
     }
 
 
@@ -193,7 +192,7 @@ public class HttpClientUtil {
 
     public static String requestPostFile(String url, File file, CustomRequestConfig customRequestConfig) {
         HttpPost httpPost = HttpWrapper.createPostFile(url, file);
-        return doRequest(url, httpPost, customRequestConfig);
+        return doRequest(httpPost, customRequestConfig);
     }
 
     public static String requestPostFile(String url, File file, ContentType contentType) {
@@ -202,7 +201,7 @@ public class HttpClientUtil {
 
     public static String requestPostFile(String url, File file, ContentType contentType, CustomRequestConfig customRequestConfig) {
         HttpPost httpPost = HttpWrapper.createPostFile(url, file, contentType);
-        return doRequest(url, httpPost, customRequestConfig);
+        return doRequest(httpPost, customRequestConfig);
     }
 
     public static String requestPostFile(String url, String filename, String fileContent) {
@@ -239,22 +238,22 @@ public class HttpClientUtil {
 
     public static String requestPostFile(String url, String name, String filename, String fileContent, CustomRequestConfig customRequestConfig) {
         HttpPost httpPost = HttpWrapper.createPostFile(url, name, filename, fileContent);
-        return doRequest(url, httpPost, customRequestConfig);
+        return doRequest(httpPost, customRequestConfig);
     }
 
     public static String requestPostFile(String url, String name, String filename, File fileContent, CustomRequestConfig customRequestConfig) {
         HttpPost httpPost = HttpWrapper.createPostFile(url, name, filename, fileContent);
-        return doRequest(url, httpPost, customRequestConfig);
+        return doRequest(httpPost, customRequestConfig);
     }
 
     public static String requestPostFile(String url, String name, String filename, InputStream fileContent, CustomRequestConfig customRequestConfig) {
         HttpPost httpPost = HttpWrapper.createPostFile(url, name, filename, fileContent);
-        return doRequest(url, httpPost, customRequestConfig);
+        return doRequest(httpPost, customRequestConfig);
     }
 
     public static String requestPostFile(String url, String name, String filename, byte[] fileContent, CustomRequestConfig customRequestConfig) {
         HttpPost httpPost = HttpWrapper.createPostFile(url, name, filename, fileContent);
-        return doRequest(url, httpPost, customRequestConfig);
+        return doRequest(httpPost, customRequestConfig);
     }
 
     /**
@@ -274,7 +273,7 @@ public class HttpClientUtil {
 
     public static String requestPostFile(String url, String name, Map<String, Object> content, CustomRequestConfig customRequestConfig) {
         HttpPost httpPost = HttpWrapper.createPostFile(url, name, content);
-        return doRequest(url, httpPost, customRequestConfig);
+        return doRequest(httpPost, customRequestConfig);
     }
 
     /**
@@ -315,14 +314,14 @@ public class HttpClientUtil {
         }
     }
 
-    public static String doRequest(String url, HttpRequestBase httpRequestBase, CustomRequestConfig customRequestConfig) {
+    public static String doRequest(HttpRequestBase httpRequestBase, CustomRequestConfig customRequestConfig) {
         try {
             if (!init) {
                 init(CONNECTION_REQUEST_TIMEOUT, CONNECT_TIMEOUT, SOCKET_TIMEOUT);
             }
             // Merge Custom Request Config
             HttpWrapper.mergeCustomRequestConfig(httpRequestBase, customRequestConfig, defaultRequestConfig);
-            return httpClient.execute(HttpHost.create(url), httpRequestBase, new PlainTxtResponseHandler());
+            return httpClient.execute(httpRequestBase, new PlainTxtResponseHandler());
         } catch (IOException e) {
             throw new HttpException(e);
         } finally {
