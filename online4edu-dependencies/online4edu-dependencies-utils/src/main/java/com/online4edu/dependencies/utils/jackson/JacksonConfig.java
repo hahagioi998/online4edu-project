@@ -1,6 +1,10 @@
 package com.online4edu.dependencies.utils.jackson;
 
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.ser.SerializerFactory;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
@@ -48,5 +52,44 @@ public final class JacksonConfig {
         javaTimeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(datetimeFormatter));
 
         objectMapper.registerModule(javaTimeModule);
+    }
+
+    /**
+     * 序列化对 Null 值处理
+     *
+     * @param objectMapper 实例
+     */
+    public static void configureNullObject(ObjectMapper objectMapper) {
+
+        SerializerFactory serializerFactory = objectMapper.getSerializerFactory()
+                .withSerializerModifier(new JacksonBeanNullValueSerializerModifier());
+
+        objectMapper.setSerializerFactory(serializerFactory);
+    }
+
+    /**
+     * 添加自定义序列化实现
+     *
+     * @param objectMapper 实例
+     */
+    public static <T> void registerModule(ObjectMapper objectMapper, Class<? extends T> type, JsonSerializer<T> serializer) {
+
+        SimpleModule module = new SimpleModule();
+        module.addSerializer(type, serializer);
+        
+        objectMapper.registerModule(module);
+    }
+
+    /**
+     * 添加自定义反序列化实现
+     *
+     * @param objectMapper 实例
+     */
+    public static <T> void registerModule(ObjectMapper objectMapper, Class<T> type, JsonDeserializer<? extends T> deserializer) {
+
+        SimpleModule module = new SimpleModule();
+        module.addDeserializer(type, deserializer);
+
+        objectMapper.registerModule(module);
     }
 }

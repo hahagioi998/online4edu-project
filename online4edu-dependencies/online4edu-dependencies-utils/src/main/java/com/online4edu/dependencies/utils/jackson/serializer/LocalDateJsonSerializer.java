@@ -17,8 +17,7 @@ import java.util.Locale;
  * @date 2021/03/13 16:38
  */
 public class LocalDateJsonSerializer extends JsonSerializer<LocalDate> {
-
-
+    
     @Override
     public void serialize(LocalDate date, JsonGenerator gen, SerializerProvider serializers) throws IOException {
         gen.writeString(date.format(DateTimeFormatter.ofPattern(DateTimePattern.DATE_PATTERN, Locale.CHINA)));

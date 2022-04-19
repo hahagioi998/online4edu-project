@@ -11,19 +11,23 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.online4edu.dependencies.utils.datetime.DateTimePattern;
 import com.online4edu.dependencies.utils.exception.DeserializationException;
 import com.online4edu.dependencies.utils.exception.SerializationException;
+import com.online4edu.dependencies.utils.jackson.serializer.BigDecimalAsStringJsonSerializer;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 
+
 /**
  * Json utils implement by Jackson.
  *
- * @author <a href="mailto:liaochuntao@live.com">liaochuntao</a>
+ * @author Shilin <br > mingrn97@gmail.com
+ * @date 2022/04/19 17:43
  */
 public final class JacksonUtil {
 
@@ -53,6 +57,14 @@ public final class JacksonUtil {
         // java.time.* 日期格式处理
         JacksonConfig.configureObjectMapper4Jsr310(MAPPER);
         JacksonConfig.configureObjectMapper4Jsr310(XML);
+
+        // Null 值处理
+        JacksonConfig.configureNullObject(MAPPER);
+        JacksonConfig.configureNullObject(XML);
+
+        // BigDecimal 自定义序列化
+        JacksonConfig.registerModule(MAPPER, BigDecimal.class, new BigDecimalAsStringJsonSerializer());
+        JacksonConfig.registerModule(XML, BigDecimal.class, new BigDecimalAsStringJsonSerializer());
     }
 
     /**
@@ -68,6 +80,7 @@ public final class JacksonUtil {
     public static XmlMapper createXmlMapper() {
         return XML;
     }
+
 
     // ====================== ObjectMapper ======================
 
@@ -304,6 +317,7 @@ public final class JacksonUtil {
     public static JavaType constructJavaType(Type type) {
         return MAPPER.constructType(type);
     }
+
 
     // ====================== XmlMapper ======================
 
