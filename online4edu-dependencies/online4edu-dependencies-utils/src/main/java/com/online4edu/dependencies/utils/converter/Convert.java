@@ -10,8 +10,6 @@ import java.io.Serializable;
  */
 public class Convert implements Serializable {
 
-    private static final long serialVersionUID = 6033751161037746468L;
-
     /**
      * 获取自动转换后的JavaBean对象
      *
